@@ -1,0 +1,84 @@
+# ====================================================================
+# FloraChain Android - Production .gitignore
+# ====================================================================
+
+# --- Built Artifacts & Compiled Binaries ---
+build/
+*/build/
+bin/
+gen/
+out/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.aar
+
+# --- Local Environment & SDK Configuration ---
+local.properties
+.bundle/
+*.properties.local
+
+# --- Gradle Caches & Wrapper Artifacts ---
+.gradle/
+buildOutputCleanup/
+.gradletasknamecache
+gradle-app.setting
+# Ensure Gradle wrapper binary jar is preserved
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- Android Studio / IntelliJ IDEA ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/shelf/
+.idea/dictionaries/
+.idea/compiler.xml
+.idea/jarRepositories.xml
+
+# --- VS Code & Alternative IDEs ---
+.vscode/
+*.code-workspace
+
+# --- C/C++ Native Build Outputs (if any) ---
+.externalNativeBuild/
+.cxx/
+*.so
+
+# --- Profiler, Memory Dumps & Diagnostics ---
+captures/
+*.hprof
+*.log
+lint/
+reports/
+
+# --- Release Signing Keys & Secrets (CRITICAL: Never commit to Git) ---
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+*.pk8
+secrets.properties
+signing.properties
+
+# --- OS-Generated Cache Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- Internal Planning & Temp Docs ---
+android_app_implementation_plan.md

@@ -1,0 +1,1 @@
+# Presentation consumer proguard rules
