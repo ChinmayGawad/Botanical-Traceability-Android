@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.florachain.designsystem.BotanicalEmerald
 import com.florachain.designsystem.DeepSlate
 import com.florachain.designsystem.SurfaceDark
@@ -31,7 +32,7 @@ import com.florachain.presentation.viewmodel.*
 
 sealed class BottomNavItem(val title: String, val route: String, val icon: ImageVector) {
     data object Verify : BottomNavItem("Verify QR", Screen.Verification.route, Icons.Default.QrCodeScanner)
-    data object Portal : BottomNavItem("Portal", Screen.FarmerDashboard.route, Icons.Default.Dashboard)
+    data object Portal : BottomNavItem("Portal", "portal_section", Icons.Default.Dashboard)
     data object Login : BottomNavItem("Account", Screen.Login.route, Icons.Default.Person)
 }
 
@@ -62,27 +63,45 @@ fun FloraChainNavHost(
                 containerColor = SurfaceDark
             ) {
                 bottomNavItems.forEach { item ->
-                    val isSelected = currentRoute == item.route
+                    val isSelected = when (item) {
+                        BottomNavItem.Verify -> currentRoute == Screen.Verification.route || currentRoute?.startsWith("batch_details") == true
+                        BottomNavItem.Portal -> currentRoute in listOf(
+                            Screen.FarmerDashboard.route,
+                            Screen.ProcessorDashboard.route,
+                            Screen.LabDashboard.route,
+                            Screen.DistributorDashboard.route,
+                            Screen.RetailerDashboard.route,
+                            Screen.RegisterHarvest.route
+                        )
+                        BottomNavItem.Login -> currentRoute in listOf(
+                            Screen.Login.route,
+                            Screen.Register.route
+                        )
+                    }
                     NavigationBarItem(
                         selected = isSelected,
                         onClick = {
                             if (item == BottomNavItem.Portal) {
-                                val target = when (authState.currentUser?.role) {
-                                    UserRole.FARMER -> Screen.FarmerDashboard.route
-                                    UserRole.PROCESSOR -> Screen.ProcessorDashboard.route
-                                    UserRole.LABORATORY -> Screen.LabDashboard.route
-                                    UserRole.DISTRIBUTOR -> Screen.DistributorDashboard.route
-                                    UserRole.RETAILER -> Screen.RetailerDashboard.route
-                                    else -> Screen.FarmerDashboard.route
+                                val target = if (authState.currentUser == null || authState.currentUser?.role == UserRole.CONSUMER) {
+                                    Screen.Login.route
+                                } else {
+                                    when (authState.currentUser?.role) {
+                                        UserRole.FARMER -> Screen.FarmerDashboard.route
+                                        UserRole.PROCESSOR -> Screen.ProcessorDashboard.route
+                                        UserRole.LABORATORY -> Screen.LabDashboard.route
+                                        UserRole.DISTRIBUTOR -> Screen.DistributorDashboard.route
+                                        UserRole.RETAILER -> Screen.RetailerDashboard.route
+                                        else -> Screen.Login.route
+                                    }
                                 }
                                 navController.navigate(target) {
-                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             } else {
                                 navController.navigate(item.route) {
-                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -178,81 +197,142 @@ fun FloraChainNavHost(
 
             // Farmer Dashboard Screen
             composable(Screen.FarmerDashboard.route) {
-                FarmerDashboardScreen(
-                    viewModel = farmerViewModel,
-                    onNavigateToRegister = { navController.navigate(Screen.RegisterHarvest.route) },
-                    onNavigateToDetails = { batchId ->
-                        navController.navigate(Screen.BatchDetails.createRoute(batchId))
-                    },
-                    onLogout = {
-                        authViewModel.logout()
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
-                            popUpTo(0)
+                            popUpTo(Screen.FarmerDashboard.route) { inclusive = true }
                         }
                     }
-                )
+                } else {
+                    FarmerDashboardScreen(
+                        viewModel = farmerViewModel,
+                        onNavigateToRegister = { navController.navigate(Screen.RegisterHarvest.route) },
+                        onNavigateToDetails = { batchId ->
+                            navController.navigate(Screen.BatchDetails.createRoute(batchId))
+                        },
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
 
             // Register Harvest Screen
             composable(Screen.RegisterHarvest.route) {
-                RegisterHarvestScreen(
-                    viewModel = farmerViewModel,
-                    farmerId = authState.currentUser?.id ?: "FARMER-001",
-                    farmerName = authState.currentUser?.name ?: "Ramesh Patel",
-                    onNavigateBack = { navController.popBackStack() }
-                )
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.RegisterHarvest.route) { inclusive = true }
+                        }
+                    }
+                } else {
+                    RegisterHarvestScreen(
+                        viewModel = farmerViewModel,
+                        farmerId = authState.currentUser?.id ?: "FARMER-001",
+                        farmerName = authState.currentUser?.name ?: "Ramesh Patel",
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
             }
 
             // Processor Dashboard Screen
             composable(Screen.ProcessorDashboard.route) {
-                ProcessBatchScreen(
-                    viewModel = processorViewModel,
-                    processorId = authState.currentUser?.id ?: "PROC-001",
-                    processorName = authState.currentUser?.name ?: "BioExtracts Ltd",
-                    onLogout = {
-                        authViewModel.logout()
-                        navController.navigate(Screen.Login.route) { popUpTo(0) }
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.ProcessorDashboard.route) { inclusive = true }
+                        }
                     }
-                )
+                } else {
+                    ProcessBatchScreen(
+                        viewModel = processorViewModel,
+                        processorId = authState.currentUser?.id ?: "PROC-001",
+                        processorName = authState.currentUser?.name ?: "BioExtracts Ltd",
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
 
             // Laboratory Dashboard Screen
             composable(Screen.LabDashboard.route) {
-                RecordAssayScreen(
-                    viewModel = labViewModel,
-                    labId = authState.currentUser?.id ?: "LAB-001",
-                    labName = authState.currentUser?.organization ?: "National Botanical Testing Lab",
-                    onLogout = {
-                        authViewModel.logout()
-                        navController.navigate(Screen.Login.route) { popUpTo(0) }
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.LabDashboard.route) { inclusive = true }
+                        }
                     }
-                )
+                } else {
+                    RecordAssayScreen(
+                        viewModel = labViewModel,
+                        labId = authState.currentUser?.id ?: "LAB-001",
+                        labName = authState.currentUser?.organization ?: "National Botanical Testing Lab",
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
 
             // Distributor Dashboard Screen
             composable(Screen.DistributorDashboard.route) {
-                DispatchShipmentScreen(
-                    viewModel = distributorViewModel,
-                    distributorId = authState.currentUser?.id ?: "DIST-001",
-                    distributorName = authState.currentUser?.organization ?: "FloraLogistics Cold-Chain",
-                    onLogout = {
-                        authViewModel.logout()
-                        navController.navigate(Screen.Login.route) { popUpTo(0) }
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.DistributorDashboard.route) { inclusive = true }
+                        }
                     }
-                )
+                } else {
+                    DispatchShipmentScreen(
+                        viewModel = distributorViewModel,
+                        distributorId = authState.currentUser?.id ?: "DIST-001",
+                        distributorName = authState.currentUser?.organization ?: "FloraLogistics Cold-Chain",
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
 
             // Retailer Dashboard Screen
             composable(Screen.RetailerDashboard.route) {
-                StockIntakeScreen(
-                    viewModel = retailerViewModel,
-                    retailerId = authState.currentUser?.id ?: "RET-001",
-                    retailerName = authState.currentUser?.name ?: "AyurAushadhi Pharmacy",
-                    onLogout = {
-                        authViewModel.logout()
-                        navController.navigate(Screen.Login.route) { popUpTo(0) }
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.RetailerDashboard.route) { inclusive = true }
+                        }
                     }
-                )
+                } else {
+                    StockIntakeScreen(
+                        viewModel = retailerViewModel,
+                        retailerId = authState.currentUser?.id ?: "RET-001",
+                        retailerName = authState.currentUser?.name ?: "AyurAushadhi Pharmacy",
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
         }
     }

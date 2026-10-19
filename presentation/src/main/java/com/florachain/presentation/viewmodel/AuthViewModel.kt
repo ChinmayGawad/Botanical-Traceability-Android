@@ -102,6 +102,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resetSuccess() {
+        _uiState.update { it.copy(isSuccess = false) }
+    }
+
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }
