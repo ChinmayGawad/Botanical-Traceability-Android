@@ -1,9 +1,19 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+}
+
+val signingPropsFile = rootProject.file("signing.properties")
+val signingProperties = Properties().apply {
+    if (signingPropsFile.exists()) {
+        load(FileInputStream(signingPropsFile))
+    }
 }
 
 android {
@@ -23,9 +33,30 @@ android {
         }
     }
 
+    val keyStoreFile = rootProject.file("florachain-release.jks")
+    val hasReleaseSigning = keyStoreFile.exists() && (
+        signingProperties.containsKey("RELEASE_STORE_PASSWORD") || System.getenv("RELEASE_STORE_PASSWORD") != null
+    )
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = keyStoreFile
+                storePassword = signingProperties.getProperty("RELEASE_STORE_PASSWORD") ?: System.getenv("RELEASE_STORE_PASSWORD")
+                keyAlias = signingProperties.getProperty("RELEASE_KEY_ALIAS") ?: System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword = signingProperties.getProperty("RELEASE_KEY_PASSWORD") ?: System.getenv("RELEASE_KEY_PASSWORD")
+                enableV1Signing = true
+                enableV2Signing = true
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
