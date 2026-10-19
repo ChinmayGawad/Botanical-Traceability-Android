@@ -14,7 +14,8 @@ data class VerifyUiState(
     val isLoading: Boolean = false,
     val scannedIdentifier: String = "",
     val result: VerificationResult? = null,
-    val error: String? = null
+    val error: String? = null,
+    val navigationEvent: String? = null
 )
 
 @HiltViewModel
@@ -38,13 +39,23 @@ class VerifyViewModel @Inject constructor(
             val result = verifyProductUseCase(cleanId)
             result.fold(
                 onSuccess = { verification ->
-                    _uiState.update { it.copy(isLoading = false, result = verification) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            result = verification,
+                            navigationEvent = verification.product?.batchId ?: cleanId
+                        )
+                    }
                 },
                 onFailure = { err ->
                     _uiState.update { it.copy(isLoading = false, error = err.localizedMessage ?: "Verification failed") }
                 }
             )
         }
+    }
+
+    fun onNavigationHandled() {
+        _uiState.update { it.copy(navigationEvent = null, isScanning = true) }
     }
 
     fun resetScanner() {

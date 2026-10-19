@@ -50,9 +50,10 @@ fun PublicVerificationScreen(
     var manualInput by remember { mutableStateOf("") }
     var hasCameraPermission by remember { mutableStateOf(true) }
 
-    LaunchedEffect(uiState.result) {
-        uiState.result?.product?.let { prod ->
-            onNavigateToDetails(prod.batchId)
+    LaunchedEffect(uiState.navigationEvent) {
+        uiState.navigationEvent?.let { batchId ->
+            viewModel.onNavigationHandled()
+            onNavigateToDetails(batchId)
         }
     }
 
