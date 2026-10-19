@@ -77,29 +77,39 @@ class ProductRepositoryImpl(
 
     override suspend fun verifyProduct(identifier: String): Result<VerificationResult> {
         return runCatching {
-            val response = api.verifyProduct(identifier)
-            if (response.isSuccessful && response.body() != null) {
-                response.body()!!.toDomain()
-            } else {
-                // Check if local cache has this product
-                val local = productDao.getProductByIdOrBatch(identifier)
-                if (local != null) {
-                    val domainProd = local.toDomain()
-                    VerificationResult(
-                        queryIdentifier = identifier,
-                        verificationState = if (domainProd.isLocalPending) VerificationState.PENDING else domainProd.verificationState,
-                        trustScore = if (domainProd.isLocalPending) 50 else 95,
-                        onChainVerified = !domainProd.isLocalPending,
-                        verifiedContractAddress = null,
-                        rootOriginTxHash = null,
-                        product = domainProd,
-                        stageIntegrity = emptyList(),
-                        verificationSummary = if (domainProd.isLocalPending) "Batch recorded locally; awaiting blockchain synchronization" else "Verified against local cryptographic record"
-                    )
+            try {
+                val response = api.verifyProduct(identifier)
+                if (response.isSuccessful && response.body() != null) {
+                    val domainResult = response.body()!!.toDomain()
+                    // Cache product locally in Room database
+                    domainResult.product?.let { productDao.insertOrUpdate(it.toEntity()) }
+                    domainResult
                 } else {
-                    throw IllegalStateException("Verification failed for batch: $identifier")
+                    fallbackToLocalVerification(identifier, "HTTP ${response.code()}")
                 }
+            } catch (e: IOException) {
+                fallbackToLocalVerification(identifier, "Network error")
             }
+        }
+    }
+
+    private suspend fun fallbackToLocalVerification(identifier: String, reason: String): VerificationResult {
+        val local = productDao.getProductByIdOrBatch(identifier)
+        if (local != null) {
+            val domainProd = local.toDomain()
+            return VerificationResult(
+                queryIdentifier = identifier,
+                verificationState = if (domainProd.isLocalPending) VerificationState.PENDING else domainProd.verificationState,
+                trustScore = if (domainProd.isLocalPending) 50 else 95,
+                onChainVerified = !domainProd.isLocalPending,
+                verifiedContractAddress = null,
+                rootOriginTxHash = null,
+                product = domainProd,
+                stageIntegrity = emptyList(),
+                verificationSummary = if (domainProd.isLocalPending) "Batch recorded locally; awaiting blockchain synchronization" else "Verified against local cryptographic record"
+            )
+        } else {
+            throw IllegalStateException("Verification failed for batch: $identifier ($reason)")
         }
     }
 

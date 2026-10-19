@@ -32,9 +32,10 @@ class VerifyViewModel @Inject constructor(
     }
 
     fun verifyBatch(identifier: String) {
+        val cleanId = verifyProductUseCase.extractBatchId(identifier)
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null, scannedIdentifier = identifier) }
-            val result = verifyProductUseCase(identifier)
+            _uiState.update { it.copy(isLoading = true, error = null, scannedIdentifier = cleanId) }
+            val result = verifyProductUseCase(cleanId)
             result.fold(
                 onSuccess = { verification ->
                     _uiState.update { it.copy(isLoading = false, result = verification) }
