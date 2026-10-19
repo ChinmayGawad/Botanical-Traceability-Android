@@ -25,12 +25,14 @@ import com.florachain.presentation.screens.consumer.PublicVerificationScreen
 import com.florachain.presentation.screens.distributor.DispatchShipmentScreen
 import com.florachain.presentation.screens.farmer.FarmerDashboardScreen
 import com.florachain.presentation.screens.farmer.RegisterHarvestScreen
+import com.florachain.presentation.screens.home.HomeScreen
 import com.florachain.presentation.screens.lab.RecordAssayScreen
 import com.florachain.presentation.screens.processor.ProcessBatchScreen
 import com.florachain.presentation.screens.retailer.StockIntakeScreen
 import com.florachain.presentation.viewmodel.*
 
 sealed class BottomNavItem(val title: String, val route: String, val icon: ImageVector) {
+    data object Home : BottomNavItem("Home", Screen.Home.route, Icons.Default.Home)
     data object Verify : BottomNavItem("Verify QR", Screen.Verification.route, Icons.Default.QrCodeScanner)
     data object Portal : BottomNavItem("Portal", "portal_section", Icons.Default.Dashboard)
     data object Login : BottomNavItem("Account", Screen.Login.route, Icons.Default.Person)
@@ -39,6 +41,7 @@ sealed class BottomNavItem(val title: String, val route: String, val icon: Image
 @Composable
 fun FloraChainNavHost(
     navController: NavHostController = rememberNavController(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
     verifyViewModel: VerifyViewModel = hiltViewModel(),
     farmerViewModel: FarmerViewModel = hiltViewModel(),
@@ -52,6 +55,7 @@ fun FloraChainNavHost(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val bottomNavItems = listOf(
+        BottomNavItem.Home,
         BottomNavItem.Verify,
         BottomNavItem.Portal,
         BottomNavItem.Login
@@ -64,6 +68,7 @@ fun FloraChainNavHost(
             ) {
                 bottomNavItems.forEach { item ->
                     val isSelected = when (item) {
+                        BottomNavItem.Home -> currentRoute == Screen.Home.route
                         BottomNavItem.Verify -> currentRoute == Screen.Verification.route || currentRoute?.startsWith("batch_details") == true
                         BottomNavItem.Portal -> currentRoute in listOf(
                             Screen.FarmerDashboard.route,
@@ -123,9 +128,41 @@ fun FloraChainNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Verification.route,
+            startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            // Home Screen
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    viewModel = homeViewModel,
+                    onNavigateToDetails = { batchId ->
+                        navController.navigate(Screen.BatchDetails.createRoute(batchId))
+                    },
+                    onNavigateToScan = {
+                        navController.navigate(Screen.Verification.route)
+                    },
+                    onNavigateToPortal = {
+                        val target = if (authState.currentUser == null || authState.currentUser?.role == UserRole.CONSUMER) {
+                            Screen.Login.route
+                        } else {
+                            when (authState.currentUser?.role) {
+                                UserRole.FARMER -> Screen.FarmerDashboard.route
+                                UserRole.PROCESSOR -> Screen.ProcessorDashboard.route
+                                UserRole.LABORATORY -> Screen.LabDashboard.route
+                                UserRole.DISTRIBUTOR -> Screen.DistributorDashboard.route
+                                UserRole.RETAILER -> Screen.RetailerDashboard.route
+                                else -> Screen.Login.route
+                            }
+                        }
+                        navController.navigate(target) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
             // Consumer Verification Screen
             composable(Screen.Verification.route) {
                 PublicVerificationScreen(

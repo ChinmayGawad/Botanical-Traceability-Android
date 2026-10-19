@@ -1,6 +1,7 @@
 package com.florachain.presentation.navigation
 
 sealed class Screen(val route: String) {
+    data object Home : Screen("home")
     data object Verification : Screen("verification")
     data object BatchDetails : Screen("batch_details/{batchId}") {
         fun createRoute(batchId: String) = "batch_details/$batchId"
