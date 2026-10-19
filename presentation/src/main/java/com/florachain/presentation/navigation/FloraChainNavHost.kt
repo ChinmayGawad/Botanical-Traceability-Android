@@ -126,9 +126,13 @@ fun FloraChainNavHost(
                 val verifyState by verifyViewModel.uiState.collectAsState()
                 val farmerState by farmerViewModel.uiState.collectAsState()
 
-                // Find batch from verifyViewModel or farmer list
-                val product = verifyState.result?.product
-                    ?: farmerState.products.find { it.batchId == batchId }
+                // Find batch from verifyViewModel or farmer list matching either id or batchId
+                val product = verifyState.result?.product?.takeIf {
+                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
+                } ?: verifyState.result?.product
+                  ?: farmerState.products.find {
+                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
+                }
 
                 BatchDetailsScreen(
                     product = product,

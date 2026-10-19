@@ -70,4 +70,8 @@ interface FloraChainApi {
     // --- Verification ---
     @GET("verify/{identifier}")
     suspend fun verifyProduct(@Path("identifier") identifier: String): Response<VerificationResultResponse>
+
+    // --- Web Project Live Sync Feed ---
+    @GET
+    suspend fun getSyncProducts(@Url url: String): Response<List<ProductResponse>>
 }

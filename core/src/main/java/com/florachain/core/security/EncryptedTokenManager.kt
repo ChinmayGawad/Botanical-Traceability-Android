@@ -73,5 +73,6 @@ class EncryptedTokenManager(context: Context) {
         const val LOCAL_EMULATOR_BASE_URL = "http://10.0.2.2:8080/api/"
         const val CLOUD_BASE_URL = "https://blockchain-botanical-traceability.onrender.com/api/"
         const val DEFAULT_BASE_URL = CLOUD_BASE_URL
+        const val WEB_SYNC_URL = "https://blockchain-botanical-traceability.vercel.app/data/products.json"
     }
 }

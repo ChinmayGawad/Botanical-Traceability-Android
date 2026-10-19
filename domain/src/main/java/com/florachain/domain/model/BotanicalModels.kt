@@ -32,15 +32,21 @@ enum class CultivationMethod {
 
 enum class ProductStatus {
     HARVESTED,
+    REGISTERED,
     IN_PROCESSING,
+    PROCESSING,
     PROCESSED,
     IN_TESTING,
+    APPROVED,
     TESTED_PASSED,
     TESTED_FAILED,
+    REJECTED,
     IN_TRANSIT,
     DELIVERED,
     IN_RETAIL,
+    RETAIL_READY,
     SOLD,
+    SUSPICIOUS,
     RECALLED
 }
 
@@ -48,7 +54,10 @@ enum class VerificationState {
     VERIFIED,
     COMPROMISED,
     SUSPICIOUS,
-    PENDING
+    PENDING,
+    REJECTED,
+    NOT_FOUND,
+    IN_PROGRESS
 }
 
 enum class TestStatus {

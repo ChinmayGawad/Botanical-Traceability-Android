@@ -94,13 +94,19 @@ fun BatchDetailsScreen(
                         )
                     }
 
+                    val isRejected = product.verificationState == VerificationState.REJECTED || product.verificationState == VerificationState.COMPROMISED
                     val trustState = when {
                         product.isLocalPending -> TrustState.PENDING_SYNC
                         product.verificationState == VerificationState.VERIFIED -> TrustState.VERIFIED_ON_CHAIN
-                        product.verificationState == VerificationState.COMPROMISED -> TrustState.COMPROMISED
+                        isRejected -> TrustState.COMPROMISED
                         else -> TrustState.OFFLINE_RECORDED
                     }
-                    TrustSealBadge(state = trustState, trustScore = 98)
+                    val trustScore = when {
+                        isRejected -> 15
+                        product.verificationState == VerificationState.VERIFIED -> 98
+                        else -> 75
+                    }
+                    TrustSealBadge(state = trustState, trustScore = trustScore)
                 }
 
                 HorizontalDivider(

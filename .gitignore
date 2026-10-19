@@ -82,3 +82,15 @@ desktop.ini
 
 # --- Internal Planning & Temp Docs ---
 android_app_implementation_plan.md
+
+# --- Kotlin & Build Tooling ---
+.kotlin/
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# --- Antigravity & Agent Caches ---
+.agents/
+.gemini/
+
