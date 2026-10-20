@@ -1,6 +1,7 @@
 package com.florachain.presentation.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.florachain.designsystem.*
@@ -40,6 +42,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var searchInput by remember { mutableStateOf("") }
+    var isBatchesExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -427,97 +430,95 @@ fun HomeScreen(
                 }
             }
 
-            // ── Recent Botanical Batches ──
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            // ── Recent Botanical Batches (Compact View) ──
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "VERIFIED BOTANICAL BATCHES",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextMuted,
-                        letterSpacing = 1.sp
-                    )
-
-                    Text(
-                        text = "${uiState.products.size} available",
-                        fontSize = 11.sp,
-                        color = BotanicalEmerald,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                uiState.products.forEach { prod ->
-                    val isRejected = prod.verificationState == VerificationState.REJECTED
-                    Surface(
-                        color = SurfaceDark.copy(alpha = 0.85f),
-                        shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(1.dp, if (isRejected) ErrorRose.copy(alpha = 0.5f) else GlassBorder),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onNavigateToDetails(prod.id) }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        Text(
+                            text = "VERIFIED BOTANICAL BATCHES",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextMuted,
+                            letterSpacing = 1.sp
+                        )
+
+                        Surface(
+                            color = BotanicalEmerald.copy(alpha = 0.12f),
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = prod.batchId,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MintAccent
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Surface(
-                                        color = if (isRejected) ErrorRose.copy(alpha = 0.15f) else BotanicalEmerald.copy(alpha = 0.15f),
-                                        shape = RoundedCornerShape(6.dp)
-                                    ) {
-                                        Text(
-                                            text = if (isRejected) "FAILED QA (15%)" else "VERIFIED (98%)",
-                                            color = if (isRejected) ErrorRose else BotanicalEmerald,
-                                            fontSize = 9.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                Text(
-                                    text = prod.name,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextPrimary
-                                )
-
-                                Text(
-                                    text = prod.botanicalName + " • " + prod.quantityKg + " kg",
-                                    fontSize = 11.sp,
-                                    color = TextSecondary,
-                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                                )
-
-                                Text(
-                                    text = prod.farmLocation,
-                                    fontSize = 10.sp,
-                                    color = TextMuted
-                                )
-                            }
-
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = TextMuted,
-                                modifier = Modifier.size(20.dp)
+                            Text(
+                                text = "${uiState.products.size} on-chain",
+                                fontSize = 10.sp,
+                                color = BotanicalEmerald,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
                         }
+                    }
+
+                    if (uiState.products.size > 3) {
+                        Surface(
+                            color = SurfaceDarkElevated.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, GlassBorder),
+                            modifier = Modifier.clickable { isBatchesExpanded = !isBatchesExpanded }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = if (isBatchesExpanded) "Show Less" else "View All (${uiState.products.size})",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MintAccent
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Icon(
+                                    imageVector = if (isBatchesExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null,
+                                    tint = MintAccent,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                val displayedBatches = if (isBatchesExpanded) uiState.products else uiState.products.take(3)
+
+                if (displayedBatches.isEmpty()) {
+                    Surface(
+                        color = SurfaceDark.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, GlassBorder),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "No botanical batches recorded yet.",
+                            fontSize = 12.sp,
+                            color = TextMuted,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                } else {
+                    displayedBatches.forEach { prod ->
+                        CompactBatchCard(
+                            product = prod,
+                            onClick = { onNavigateToDetails(prod.id) }
+                        )
                     }
                 }
             }
@@ -586,6 +587,125 @@ private fun MetricCardItem(
                 Text(title, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                 Text(label, fontSize = 10.sp, color = TextSecondary)
             }
+        }
+    }
+}
+
+@Composable
+private fun CompactBatchCard(
+    product: BotanicalProduct,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isRejected = product.verificationState == VerificationState.REJECTED
+    Surface(
+        color = SurfaceDark.copy(alpha = 0.85f),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, if (isRejected) ErrorRose.copy(alpha = 0.5f) else GlassBorder),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(
+                        if (isRejected) ErrorRose.copy(alpha = 0.15f) else BotanicalDark,
+                        RoundedCornerShape(10.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (isRejected) Icons.Default.Warning else Icons.Default.Eco,
+                    contentDescription = null,
+                    tint = if (isRejected) ErrorRose else BotanicalEmerald,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = product.name,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+
+                    Surface(
+                        color = if (isRejected) ErrorRose.copy(alpha = 0.15f) else BotanicalEmerald.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            text = if (isRejected) "FAILED QA" else "VERIFIED 98%",
+                            color = if (isRejected) ErrorRose else BotanicalEmerald,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = product.batchId,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MintAccent
+                    )
+                    Text(
+                        text = "•",
+                        fontSize = 10.sp,
+                        color = TextMuted
+                    )
+                    Text(
+                        text = product.botanicalName,
+                        fontSize = 11.sp,
+                        color = TextSecondary,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    Text(
+                        text = "•",
+                        fontSize = 10.sp,
+                        color = TextMuted
+                    )
+                    Text(
+                        text = "${product.quantityKg.toInt()} kg",
+                        fontSize = 10.sp,
+                        color = TextMuted
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = "Details",
+                tint = TextMuted,
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
