@@ -55,15 +55,18 @@ fun RegisterHarvestScreen(
         }
     }
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Log New Harvest",
                 canNavigateBack = true,
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                showThemeToggle = true
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -320,16 +323,19 @@ fun RegisterHarvestScreen(
                     )
                 },
                 enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                 } else {
-                    Text("Commit Harvest & Seal Origin", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Commit Harvest & Seal Origin", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
             }
         }

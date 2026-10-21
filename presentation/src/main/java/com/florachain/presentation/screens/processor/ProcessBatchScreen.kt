@@ -46,18 +46,21 @@ fun ProcessBatchScreen(
     val processedQty = processedQtyText.toDoubleOrNull() ?: 0.0
     val yieldLoss = if (initialQty > 0) ((initialQty - processedQty) / initialQty) * 100 else 0.0
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Processor Extraction Portal",
+                showThemeToggle = true,
                 actions = {
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = ErrorRose)
+                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
                 }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -251,16 +254,19 @@ fun ProcessBatchScreen(
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                 } else {
-                    Text("Anchor Processing Stage", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Anchor Processing Stage", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
             }
         }

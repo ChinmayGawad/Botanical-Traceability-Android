@@ -39,18 +39,21 @@ fun StockIntakeScreen(
 
     val unitPrice = unitPriceText.toDoubleOrNull() ?: 499.0
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Retail Stock Intake",
+                showThemeToggle = true,
                 actions = {
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = ErrorRose)
+                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
                 }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -200,16 +203,19 @@ fun StockIntakeScreen(
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                 } else {
-                    Text("Complete Stock Intake & Issue QR", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Complete Stock Intake & Issue QR", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
             }
         }

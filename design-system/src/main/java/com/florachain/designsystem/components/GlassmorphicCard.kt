@@ -12,16 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.florachain.designsystem.GlassBorder
-import com.florachain.designsystem.SurfaceDark
+import com.florachain.designsystem.FloraChainTheme
 
 @Composable
 fun GlassmorphicCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 16.dp,
     borderWidth: Dp = 1.dp,
-    borderColor: Color = GlassBorder,
-    backgroundColor: Color = SurfaceDark.copy(alpha = 0.85f),
+    borderColor: Color = FloraChainTheme.colors.glassBorder,
+    backgroundColor: Color = FloraChainTheme.colors.glassSurface,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(

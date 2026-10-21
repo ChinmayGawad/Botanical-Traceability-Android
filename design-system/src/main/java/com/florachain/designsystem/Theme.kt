@@ -2,57 +2,175 @@ package com.florachain.designsystem
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
+@Immutable
+data class FloraChainColors(
+    val background: Color,
+    val surface: Color,
+    val surfaceElevated: Color,
+    val glassSurface: Color,
+    val glassBorder: Color,
+    val primary: Color,
+    val onPrimary: Color,
+    val primaryContainer: Color,
+    val onPrimaryContainer: Color,
+    val secondary: Color,
+    val accent: Color,
+    val textPrimary: Color,
+    val textSecondary: Color,
+    val textMuted: Color,
+    val trustGreen: Color,
+    val warningAmber: Color,
+    val errorRose: Color,
+    val infoBlue: Color,
+    val cardBorderBrush: Brush,
+    val isDark: Boolean
+)
+
+val DarkFloraChainColors = FloraChainColors(
+    background = DarkBackground,
+    surface = SurfaceDark,
+    surfaceElevated = SurfaceDarkElevated,
+    glassSurface = GlassSurfaceDark,
+    glassBorder = GlassBorderDark,
     primary = BotanicalEmerald,
-    onPrimary = DeepSlate,
+    onPrimary = DarkBackground,
     primaryContainer = BotanicalDark,
     onPrimaryContainer = BotanicalLight,
     secondary = MintAccent,
-    onSecondary = DeepSlate,
-    background = DeepSlate,
+    accent = MintAccent,
+    textPrimary = TextPrimary,
+    textSecondary = TextSecondary,
+    textMuted = TextMuted,
+    trustGreen = TrustGreen,
+    warningAmber = WarningAmber,
+    errorRose = ErrorRose,
+    infoBlue = InfoBlue,
+    cardBorderBrush = Brush.linearGradient(
+        listOf(
+            Color(0x8010B981),
+            Color(0x2634D399),
+            Color(0x4010B981)
+        )
+    ),
+    isDark = true
+)
+
+val LightFloraChainColors = FloraChainColors(
+    background = LightBackground,
+    surface = SurfaceLight,
+    surfaceElevated = SurfaceLightElevated,
+    glassSurface = GlassSurfaceLight,
+    glassBorder = GlassBorderLight,
+    primary = ForestGreen,
+    onPrimary = Color.White,
+    primaryContainer = BotanicalLight,
+    onPrimaryContainer = BotanicalDark,
+    secondary = BotanicalEmerald,
+    accent = HarvestGold,
+    textPrimary = LightTextPrimary,
+    textSecondary = LightTextSecondary,
+    textMuted = LightTextMuted,
+    trustGreen = TrustGreen,
+    warningAmber = WarningAmber,
+    errorRose = ErrorRose,
+    infoBlue = InfoBlue,
+    cardBorderBrush = Brush.linearGradient(
+        listOf(
+            Color(0xFF6EE7B7),
+            Color(0xFFA7F3D0),
+            Color(0xFF6EE7B7)
+        )
+    ),
+    isDark = false
+)
+
+val LocalFloraChainColors = staticCompositionLocalOf { DarkFloraChainColors }
+
+data class ThemeController(
+    val isDark: Boolean,
+    val toggleTheme: () -> Unit
+)
+
+val LocalThemeController = compositionLocalOf {
+    ThemeController(isDark = true, toggleTheme = {})
+}
+
+private val DarkColorScheme = darkColorScheme(
+    primary = BotanicalEmerald,
+    onPrimary = DarkBackground,
+    primaryContainer = BotanicalDark,
+    onPrimaryContainer = BotanicalLight,
+    secondary = MintAccent,
+    onSecondary = DarkBackground,
+    background = DarkBackground,
     onBackground = TextPrimary,
     surface = SurfaceDark,
     onSurface = TextPrimary,
     surfaceVariant = SurfaceDarkElevated,
     onSurfaceVariant = TextSecondary,
-    outline = GlassBorder,
+    outline = GlassBorderDark,
     error = ErrorRose,
     onError = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = BotanicalEmerald,
+    primary = ForestGreen,
     onPrimary = Color.White,
     primaryContainer = BotanicalLight,
     onPrimaryContainer = BotanicalDark,
-    secondary = BotanicalDark,
+    secondary = BotanicalEmerald,
     onSecondary = Color.White,
-    background = Color(0xFFF0FDF4),
-    onBackground = Color(0xFF0F172A),
-    surface = Color.White,
-    onSurface = Color(0xFF0F172A),
-    surfaceVariant = Color(0xFFE2E8F0),
-    onSurfaceVariant = Color(0xFF475569),
-    outline = Color(0xFFCBD5E1),
+    background = LightBackground,
+    onBackground = LightTextPrimary,
+    surface = SurfaceLight,
+    onSurface = LightTextPrimary,
+    surfaceVariant = SurfaceLightElevated,
+    onSurfaceVariant = LightTextSecondary,
+    outline = GlassBorderLight,
     error = ErrorRose,
     onError = Color.White
 )
 
+object FloraChainTheme {
+    val colors: FloraChainColors
+        @Composable
+        get() = LocalFloraChainColors.current
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
+}
+
 @Composable
 fun FloraChainTheme(
-    darkTheme: Boolean = true, // Default to sleek dark glassmorphism
+    darkTheme: Boolean = true,
+    onToggleTheme: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val floraColors = if (darkTheme) DarkFloraChainColors else LightFloraChainColors
+    val materialScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val themeController = remember(darkTheme, onToggleTheme) {
+        ThemeController(
+            isDark = darkTheme,
+            toggleTheme = onToggleTheme ?: {}
+        )
+    }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalFloraChainColors provides floraColors,
+        LocalThemeController provides themeController
+    ) {
+        MaterialTheme(
+            colorScheme = materialScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

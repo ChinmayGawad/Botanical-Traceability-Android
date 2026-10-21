@@ -44,18 +44,21 @@ fun RecordAssayScreen(
     val purity = purityText.toDoubleOrNull() ?: 98.4
     val moisture = moistureText.toDoubleOrNull() ?: 5.2
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Laboratory QA Assay",
+                showThemeToggle = true,
                 actions = {
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = ErrorRose)
+                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
                 }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -225,16 +228,19 @@ fun RecordAssayScreen(
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                 } else {
-                    Text("Certify Batch & Issue CoA", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Certify Batch & Issue CoA", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
             }
         }

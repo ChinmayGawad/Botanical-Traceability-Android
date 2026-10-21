@@ -1,6 +1,7 @@
 package com.florachain.presentation.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -18,16 +19,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.florachain.designsystem.*
-import com.florachain.designsystem.components.AppTopBar
-import com.florachain.designsystem.components.GlassmorphicCard
+import com.florachain.designsystem.components.*
 import com.florachain.domain.model.BotanicalProduct
 import com.florachain.domain.model.VerificationState
 import com.florachain.presentation.viewmodel.HomeViewModel
@@ -41,50 +44,37 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val colors = FloraChainTheme.colors
+    val haptic = LocalHapticFeedback.current
+
     var searchInput by remember { mutableStateOf("") }
+    var selectedCategoryFilter by remember { mutableStateOf("All") }
     var isBatchesExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+
+    val categoryFilters = listOf("All", "Ashwagandha", "Tulsi", "Turmeric", "Brahmi")
 
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "FloraChain",
+                showNetworkPill = true,
+                showThemeToggle = true,
                 actions = {
-                    Surface(
-                        color = BotanicalEmerald.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(1.dp, BotanicalEmerald.copy(alpha = 0.4f)),
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .background(BotanicalEmerald, CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Polygon Amoy",
-                                color = BotanicalEmerald,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                    IconButton(onClick = { viewModel.refresh() }) {
+                    IconButton(onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewModel.refresh()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = "Refresh",
-                            tint = BotanicalEmerald
+                            tint = colors.primary
                         )
                     }
                 }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { innerPadding ->
         Column(
             modifier = modifier
@@ -94,69 +84,107 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // ── Hero Section ──
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+            // ── Hero Section with Ambient Glow ──
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        if (colors.isDark) HeroGlowDark else HeroGlowLight
+                    )
+                    .padding(vertical = 4.dp)
             ) {
-                Surface(
-                    color = BotanicalDark.copy(alpha = 0.6f),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, BotanicalEmerald.copy(alpha = 0.3f))
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    Surface(
+                        color = colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, colors.primary.copy(alpha = 0.35f))
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Shield,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "DECENTRALIZED BOTANICAL INTEGRITY",
+                                color = colors.primary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.6.sp
+                            )
+                        }
+                    }
+
                     Text(
-                        text = "DECENTRALIZED BOTANICAL INTEGRITY",
-                        color = MintAccent,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        text = "Soil-to-Shelf\nTraceability Platform",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Black,
+                        color = colors.textPrimary,
+                        lineHeight = 34.sp
+                    )
+
+                    Text(
+                        text = "Verify botanical harvest authenticity, active compound HPLC purity assays, and cold-chain IoT telemetry immutably recorded on blockchain.",
+                        fontSize = 13.sp,
+                        color = colors.textSecondary,
+                        lineHeight = 19.sp
                     )
                 }
-
-                Text(
-                    text = "Soil-to-Shelf\nTraceability Platform",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Black,
-                    color = TextPrimary,
-                    lineHeight = 32.sp
-                )
-
-                Text(
-                    text = "Verify botanical harvest authenticity, active compound HPLC purity assays, and cold-chain IoT telemetry immutably recorded on blockchain.",
-                    fontSize = 13.sp,
-                    color = TextSecondary,
-                    lineHeight = 18.sp
-                )
             }
 
-            // ── Search & Scan Bar ──
-            GlassmorphicCard(modifier = Modifier.fillMaxWidth()) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            // ── Search & Scan Bar (CyberGlassCard) ──
+            CyberGlassCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
                         value = searchInput,
                         onValueChange = { searchInput = it },
-                        placeholder = { Text("Search Batch (e.g. BOT-2024-8901)", fontSize = 13.sp, color = TextMuted) },
+                        placeholder = {
+                            Text(
+                                "Search Batch (e.g. BOT-2024-8901)",
+                                fontSize = 13.sp,
+                                color = colors.textMuted
+                            )
+                        },
                         leadingIcon = {
-                            Icon(Icons.Default.Search, contentDescription = null, tint = BotanicalEmerald)
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = null,
+                                tint = colors.primary
+                            )
                         },
                         trailingIcon = {
                             if (searchInput.isNotBlank()) {
                                 IconButton(onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onNavigateToDetails(searchInput.trim())
                                 }) {
-                                    Icon(Icons.Default.ArrowForward, contentDescription = "Search", tint = BotanicalEmerald)
+                                    Icon(
+                                        Icons.Default.ArrowForward,
+                                        contentDescription = "Search",
+                                        tint = colors.primary
+                                    )
                                 }
                             }
                         },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
+                            focusedTextColor = colors.textPrimary,
+                            unfocusedTextColor = colors.textPrimary,
+                            focusedBorderColor = colors.primary,
+                            unfocusedBorderColor = colors.glassBorder,
+                            focusedContainerColor = colors.surface,
+                            unfocusedContainerColor = colors.surface
                         ),
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -166,47 +194,77 @@ fun HomeScreen(
                     ) {
                         Button(
                             onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 if (searchInput.isNotBlank()) {
                                     onNavigateToDetails(searchInput.trim())
                                 } else {
                                     onNavigateToDetails("BOT-2024-8901")
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colors.primary,
+                                contentColor = colors.onPrimary
+                            ),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .weight(1.5f)
+                                .weight(1.4f)
                                 .height(46.dp)
                         ) {
-                            Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = DeepSlate, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.VerifiedUser,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Verify Batch", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(
+                                "Verify Batch",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
                         }
 
                         OutlinedButton(
-                            onClick = onNavigateToScan,
-                            border = ButtonDefaults.outlinedButtonBorder.copy(brush = SolidColor(MintAccent)),
+                            onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onNavigateToScan()
+                            },
+                            border = BorderStroke(1.dp, colors.primary),
                             shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = colors.primary
+                            ),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(46.dp)
                         ) {
-                            Icon(Icons.Default.QrCodeScanner, contentDescription = null, tint = MintAccent, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.QrCodeScanner,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Scan QR", color = MintAccent, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(
+                                "Scan QR",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
+                            )
                         }
                     }
                 }
             }
 
+            // ── Live 5-Node Blockchain Consensus Strip ──
+            ConsensusNodeStrip()
+
             // ── Live Provenance Featured Card ──
             val featured = uiState.featuredProduct
             if (featured != null) {
-                GlassmorphicCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onNavigateToDetails(featured.id) },
-                    borderColor = BotanicalEmerald.copy(alpha = 0.5f)
+                CyberGlassCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onNavigateToDetails(featured.id)
+                    }
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(
@@ -215,9 +273,9 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Surface(
-                                color = BotanicalDark,
+                                color = colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
                                 shape = RoundedCornerShape(20.dp),
-                                border = BorderStroke(1.dp, BotanicalEmerald.copy(alpha = 0.6f))
+                                border = BorderStroke(1.dp, colors.primary.copy(alpha = 0.5f))
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -226,12 +284,12 @@ fun HomeScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(7.dp)
-                                            .background(BotanicalEmerald, CircleShape)
+                                            .background(colors.primary, CircleShape)
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = "LIVE PROVENANCE",
-                                        color = BotanicalEmerald,
+                                        color = colors.primary,
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -240,7 +298,7 @@ fun HomeScreen(
 
                             Text(
                                 text = "#" + featured.batchId,
-                                color = TextPrimary,
+                                color = colors.textPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -249,14 +307,14 @@ fun HomeScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
                                 text = featured.name,
-                                fontSize = 18.sp,
+                                fontSize = 19.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary
+                                color = colors.textPrimary
                             )
                             Text(
                                 text = featured.botanicalName + " (${featured.category.name})",
                                 fontSize = 12.sp,
-                                color = TextMuted,
+                                color = colors.textMuted,
                                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
                             )
                         }
@@ -267,79 +325,87 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Surface(
-                                color = SurfaceDark,
+                                color = colors.surfaceElevated,
                                 shape = RoundedCornerShape(10.dp),
-                                border = BorderStroke(1.dp, GlassBorder),
+                                border = BorderStroke(1.dp, colors.glassBorder),
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Text("ACTIVE PURITY", fontSize = 9.sp, color = TextSecondary, fontWeight = FontWeight.Bold)
-                                    Text("99.5% Withanolides", fontSize = 12.sp, color = BotanicalEmerald, fontWeight = FontWeight.Bold)
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(
+                                        "ACTIVE HPLC PURITY",
+                                        fontSize = 9.sp,
+                                        color = colors.textSecondary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        "99.5% Withanolides",
+                                        fontSize = 12.sp,
+                                        color = colors.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
 
                             Surface(
-                                color = SurfaceDark,
+                                color = colors.surfaceElevated,
                                 shape = RoundedCornerShape(10.dp),
-                                border = BorderStroke(1.dp, GlassBorder),
+                                border = BorderStroke(1.dp, colors.glassBorder),
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Text("FARM LOCATION", fontSize = 9.sp, color = TextSecondary, fontWeight = FontWeight.Bold)
-                                    Text(featured.farmLocation.take(16), fontSize = 12.sp, color = InfoBlue, fontWeight = FontWeight.Bold)
-                                }
-                            }
-                        }
-
-                        // 5-Node Consensus Strip
-                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text("5-NODE BLOCKCHAIN CONSENSUS", fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Bold)
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                listOf("Farm", "Mill", "Lab", "Cold", "Retail").forEach { node ->
-                                    Surface(
-                                        color = BotanicalDark.copy(alpha = 0.5f),
-                                        shape = RoundedCornerShape(6.dp),
-                                        border = BorderStroke(1.dp, BotanicalEmerald.copy(alpha = 0.4f)),
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.padding(vertical = 4.dp)
-                                        ) {
-                                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(12.dp))
-                                            Text(node, fontSize = 9.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
-                                        }
-                                    }
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(
+                                        "FARM ORIGIN",
+                                        fontSize = 9.sp,
+                                        color = colors.textSecondary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        featured.farmLocation.take(18),
+                                        fontSize = 12.sp,
+                                        color = colors.infoBlue,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
 
                         Button(
-                            onClick = { onNavigateToDetails(featured.id) },
-                            colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                            onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onNavigateToDetails(featured.id)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colors.primary,
+                                contentColor = colors.onPrimary
+                            ),
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(42.dp)
+                                .height(44.dp)
                         ) {
-                            Text("Inspect Full Provenance Journey", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            Text(
+                                "Inspect Full Provenance Journey",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = DeepSlate, modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Default.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
                 }
             }
 
-            // ── Ledger Blockchain Metrics Strip ──
+            // ── Ledger Protocol Metrics Strip ──
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = "NETWORK PROTOCOL METRICS",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextMuted,
+                    color = colors.textMuted,
                     letterSpacing = 1.sp
                 )
 
@@ -386,7 +452,7 @@ fun HomeScreen(
                     text = "CRYPTOGRAPHIC SUPPLY CHAIN PIPELINE",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextMuted,
+                    color = colors.textMuted,
                     letterSpacing = 1.sp
                 )
 
@@ -400,9 +466,9 @@ fun HomeScreen(
 
                 stages.forEach { stage ->
                     Surface(
-                        color = SurfaceDark.copy(alpha = 0.7f),
+                        color = colors.glassSurface,
                         shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, GlassBorder),
+                        border = BorderStroke(1.dp, colors.glassBorder),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -411,31 +477,54 @@ fun HomeScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .background(BotanicalDark, RoundedCornerShape(10.dp)),
+                                    .size(38.dp)
+                                    .background(
+                                        colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
+                                        RoundedCornerShape(10.dp)
+                                    ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(stage.icon, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(20.dp))
+                                Icon(
+                                    stage.icon,
+                                    contentDescription = null,
+                                    tint = colors.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(stage.step + " • ", color = MintAccent, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                                    Text(stage.title, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        stage.step + " • ",
+                                        color = colors.primary,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        stage.title,
+                                        color = colors.textPrimary,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
-                                Text(stage.desc, color = TextSecondary, fontSize = 11.sp, lineHeight = 15.sp)
+                                Text(
+                                    stage.desc,
+                                    color = colors.textSecondary,
+                                    fontSize = 11.sp,
+                                    lineHeight = 15.sp
+                                )
                             }
                         }
                     }
                 }
             }
 
-            // ── Recent Botanical Batches (Compact View) ──
+            // ── Verified Botanical Batches with Category Filter Chips ──
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateContentSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -450,18 +539,18 @@ fun HomeScreen(
                             text = "VERIFIED BOTANICAL BATCHES",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextMuted,
+                            color = colors.textMuted,
                             letterSpacing = 1.sp
                         )
 
                         Surface(
-                            color = BotanicalEmerald.copy(alpha = 0.12f),
+                            color = colors.primary.copy(alpha = 0.15f),
                             shape = RoundedCornerShape(10.dp)
                         ) {
                             Text(
                                 text = "${uiState.products.size} on-chain",
                                 fontSize = 10.sp,
-                                color = BotanicalEmerald,
+                                color = colors.primary,
                                 fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
@@ -470,10 +559,12 @@ fun HomeScreen(
 
                     if (uiState.products.size > 3) {
                         Surface(
-                            color = SurfaceDarkElevated.copy(alpha = 0.7f),
+                            color = colors.surfaceElevated,
                             shape = RoundedCornerShape(8.dp),
-                            border = BorderStroke(1.dp, GlassBorder),
-                            modifier = Modifier.clickable { isBatchesExpanded = !isBatchesExpanded }
+                            border = BorderStroke(1.dp, colors.glassBorder),
+                            modifier = Modifier.clickable {
+                                isBatchesExpanded = !isBatchesExpanded
+                            }
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -483,13 +574,13 @@ fun HomeScreen(
                                     text = if (isBatchesExpanded) "Show Less" else "View All (${uiState.products.size})",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MintAccent
+                                    color = colors.primary
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Icon(
                                     imageVector = if (isBatchesExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                     contentDescription = null,
-                                    tint = MintAccent,
+                                    tint = colors.primary,
                                     modifier = Modifier.size(14.dp)
                                 )
                             }
@@ -497,19 +588,64 @@ fun HomeScreen(
                     }
                 }
 
-                val displayedBatches = if (isBatchesExpanded) uiState.products else uiState.products.take(3)
+                // Filter Chips
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(categoryFilters) { filter ->
+                        val isSelected = selectedCategoryFilter == filter
+                        val chipBg by animateColorAsState(
+                            targetValue = if (isSelected) colors.primary else colors.glassSurface,
+                            label = "ChipBg"
+                        )
+                        val chipText by animateColorAsState(
+                            targetValue = if (isSelected) colors.onPrimary else colors.textSecondary,
+                            label = "ChipText"
+                        )
+
+                        Surface(
+                            color = chipBg,
+                            shape = RoundedCornerShape(14.dp),
+                            border = BorderStroke(
+                                1.dp,
+                                if (isSelected) colors.primary else colors.glassBorder
+                            ),
+                            modifier = Modifier.clickable {
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                selectedCategoryFilter = filter
+                            }
+                        ) {
+                            Text(
+                                text = filter,
+                                color = chipText,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                val filteredProducts = uiState.products.filter { prod ->
+                    if (selectedCategoryFilter == "All") true
+                    else prod.name.contains(selectedCategoryFilter, ignoreCase = true) ||
+                            prod.botanicalName.contains(selectedCategoryFilter, ignoreCase = true)
+                }
+
+                val displayedBatches = if (isBatchesExpanded) filteredProducts else filteredProducts.take(3)
 
                 if (displayedBatches.isEmpty()) {
                     Surface(
-                        color = SurfaceDark.copy(alpha = 0.5f),
+                        color = colors.glassSurface,
                         shape = RoundedCornerShape(10.dp),
-                        border = BorderStroke(1.dp, GlassBorder),
+                        border = BorderStroke(1.dp, colors.glassBorder),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "No botanical batches recorded yet.",
+                            text = "No botanical batches found for this category.",
                             fontSize = 12.sp,
-                            color = TextMuted,
+                            color = colors.textMuted,
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -517,17 +653,22 @@ fun HomeScreen(
                     displayedBatches.forEach { prod ->
                         CompactBatchCard(
                             product = prod,
-                            onClick = { onNavigateToDetails(prod.id) }
+                            onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onNavigateToDetails(prod.id)
+                            }
                         )
                     }
                 }
             }
 
             // ── Stakeholder Field Portal Callout ──
-            GlassmorphicCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToPortal() }
+            CyberGlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onNavigateToPortal()
+                }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -536,17 +677,39 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .size(44.dp)
-                            .background(BotanicalDark, RoundedCornerShape(12.dp)),
+                            .background(
+                                colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
+                                RoundedCornerShape(12.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Dashboard, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(24.dp))
+                        Icon(
+                            Icons.Default.Dashboard,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("AYUSH Stakeholder Portal", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                        Text("Sign in as Farmer, Processor, QA Lab, Logistics, or Retailer", fontSize = 11.sp, color = TextSecondary)
+                        Text(
+                            "AYUSH Stakeholder Portal",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            "Sign in as Farmer, Processor, QA Lab, Logistics, or Retailer",
+                            fontSize = 11.sp,
+                            color = colors.textSecondary
+                        )
                     }
-                    Icon(Icons.Default.ArrowForward, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.ArrowForward,
+                        contentDescription = null,
+                        tint = colors.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
             }
 
@@ -564,10 +727,12 @@ private fun MetricCardItem(
     label: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = FloraChainTheme.colors
+
     Surface(
-        color = SurfaceDark.copy(alpha = 0.85f),
+        color = colors.glassSurface,
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, GlassBorder),
+        border = BorderStroke(1.dp, colors.glassBorder),
         modifier = modifier
     ) {
         Row(
@@ -577,15 +742,32 @@ private fun MetricCardItem(
             Box(
                 modifier = Modifier
                     .size(34.dp)
-                    .background(BotanicalDark, RoundedCornerShape(8.dp)),
+                    .background(
+                        colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
+                        RoundedCornerShape(8.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(18.dp))
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = colors.primary,
+                    modifier = Modifier.size(18.dp)
+                )
             }
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(title, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                Text(label, fontSize = 10.sp, color = TextSecondary)
+                Text(
+                    title,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+                Text(
+                    label,
+                    fontSize = 10.sp,
+                    color = colors.textSecondary
+                )
             }
         }
     }
@@ -597,11 +779,16 @@ private fun CompactBatchCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = FloraChainTheme.colors
     val isRejected = product.verificationState == VerificationState.REJECTED
+
     Surface(
-        color = SurfaceDark.copy(alpha = 0.85f),
+        color = colors.glassSurface,
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, if (isRejected) ErrorRose.copy(alpha = 0.5f) else GlassBorder),
+        border = BorderStroke(
+            1.dp,
+            if (isRejected) colors.errorRose.copy(alpha = 0.5f) else colors.glassBorder
+        ),
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
@@ -614,7 +801,8 @@ private fun CompactBatchCard(
                 modifier = Modifier
                     .size(36.dp)
                     .background(
-                        if (isRejected) ErrorRose.copy(alpha = 0.15f) else BotanicalDark,
+                        if (isRejected) colors.errorRose.copy(alpha = 0.15f)
+                        else colors.primary.copy(alpha = if (colors.isDark) 0.18f else 0.12f),
                         RoundedCornerShape(10.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -622,7 +810,7 @@ private fun CompactBatchCard(
                 Icon(
                     imageVector = if (isRejected) Icons.Default.Warning else Icons.Default.Eco,
                     contentDescription = null,
-                    tint = if (isRejected) ErrorRose else BotanicalEmerald,
+                    tint = if (isRejected) colors.errorRose else colors.primary,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -641,19 +829,20 @@ private fun CompactBatchCard(
                         text = product.name,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = colors.textPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f, fill = false)
                     )
 
                     Surface(
-                        color = if (isRejected) ErrorRose.copy(alpha = 0.15f) else BotanicalEmerald.copy(alpha = 0.15f),
+                        color = if (isRejected) colors.errorRose.copy(alpha = 0.15f)
+                        else colors.primary.copy(alpha = 0.15f),
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Text(
                             text = if (isRejected) "FAILED QA" else "VERIFIED 98%",
-                            color = if (isRejected) ErrorRose else BotanicalEmerald,
+                            color = if (isRejected) colors.errorRose else colors.primary,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
@@ -669,17 +858,17 @@ private fun CompactBatchCard(
                         text = product.batchId,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MintAccent
+                        color = colors.primary
                     )
                     Text(
                         text = "•",
                         fontSize = 10.sp,
-                        color = TextMuted
+                        color = colors.textMuted
                     )
                     Text(
                         text = product.botanicalName,
                         fontSize = 11.sp,
-                        color = TextSecondary,
+                        color = colors.textSecondary,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -688,12 +877,12 @@ private fun CompactBatchCard(
                     Text(
                         text = "•",
                         fontSize = 10.sp,
-                        color = TextMuted
+                        color = colors.textMuted
                     )
                     Text(
                         text = "${product.quantityKg.toInt()} kg",
                         fontSize = 10.sp,
-                        color = TextMuted
+                        color = colors.textMuted
                     )
                 }
             }
@@ -703,7 +892,7 @@ private fun CompactBatchCard(
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "Details",
-                tint = TextMuted,
+                tint = colors.textMuted,
                 modifier = Modifier.size(18.dp)
             )
         }

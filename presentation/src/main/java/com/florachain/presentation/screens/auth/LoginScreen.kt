@@ -45,10 +45,12 @@ fun LoginScreen(
         }
     }
 
+    val colors = FloraChainTheme.colors
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DeepSlate),
+            .background(colors.background),
         contentAlignment = Alignment.Center
     ) {
         if (uiState.currentUser != null) {
@@ -323,16 +325,19 @@ fun LoginScreen(
                     Button(
                         onClick = { viewModel.login(email, password) },
                         enabled = !uiState.isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.primary,
+                            contentColor = colors.onPrimary
+                        ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
                     ) {
                         if (uiState.isLoading) {
-                            CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                            CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                         } else {
-                            Text("Sign In to FloraChain", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text("Sign In to FloraChain", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
 

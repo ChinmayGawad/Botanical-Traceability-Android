@@ -34,17 +34,19 @@ fun FarmerDashboardScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val colors = FloraChainTheme.colors
 
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Farmer Field Portal",
+                showThemeToggle = true,
                 actions = {
                     IconButton(onClick = { viewModel.refreshProducts() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = BotanicalEmerald)
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = colors.primary)
                     }
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = ErrorRose)
+                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
                 }
             )
@@ -52,13 +54,13 @@ fun FarmerDashboardScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onNavigateToRegister,
-                containerColor = BotanicalEmerald,
-                contentColor = DeepSlate,
+                containerColor = colors.primary,
+                contentColor = colors.onPrimary,
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
                 text = { Text("Log Harvest", fontWeight = FontWeight.Bold) }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -162,6 +164,7 @@ private fun ProductBatchCard(
     product: BotanicalProduct,
     onClick: () -> Unit
 ) {
+    val colors = FloraChainTheme.colors
     GlassmorphicCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,24 +180,24 @@ private fun ProductBatchCard(
                     text = product.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = colors.textPrimary
                 )
                 Text(
                     text = product.botanicalName,
                     fontSize = 13.sp,
-                    color = MintAccent
+                    color = colors.primary
                 )
                 Text(
                     text = "ID: ${product.batchId} • ${product.quantityKg} kg",
                     fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace,
-                    color = TextSecondary,
+                    color = colors.textSecondary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
                     text = "Location: ${product.farmLocation}",
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = colors.textMuted
                 )
             }
 

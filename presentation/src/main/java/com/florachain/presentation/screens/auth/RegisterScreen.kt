@@ -48,15 +48,18 @@ fun RegisterScreen(
         }
     }
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Stakeholder Registration",
                 canNavigateBack = true,
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                showThemeToggle = true
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -263,16 +266,19 @@ fun RegisterScreen(
                         )
                     },
                     enabled = !uiState.isLoading,
-                    colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimary
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                 ) {
                     if (uiState.isLoading) {
-                        CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                        CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                     } else {
-                        Text("Create Stakeholder Account", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text("Create Stakeholder Account", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
                 }
             }

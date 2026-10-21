@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -61,10 +62,14 @@ fun FloraChainNavHost(
         BottomNavItem.Login
     )
 
+    val colors = com.florachain.designsystem.FloraChainTheme.colors
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = SurfaceDark
+                containerColor = colors.surface,
+                tonalElevation = 8.dp
             ) {
                 bottomNavItems.forEach { item ->
                     val isSelected = when (item) {
@@ -86,6 +91,7 @@ fun FloraChainNavHost(
                     NavigationBarItem(
                         selected = isSelected,
                         onClick = {
+                            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
                             if (item == BottomNavItem.Portal) {
                                 val target = if (authState.currentUser == null || authState.currentUser?.role == UserRole.CONSUMER) {
                                     Screen.Login.route
@@ -113,13 +119,13 @@ fun FloraChainNavHost(
                             }
                         },
                         icon = { Icon(item.icon, contentDescription = item.title) },
-                        label = { Text(item.title) },
+                        label = { Text(item.title, fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.Normal) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = DeepSlate,
-                            selectedTextColor = BotanicalEmerald,
-                            indicatorColor = BotanicalEmerald,
-                            unselectedIconColor = TextMuted,
-                            unselectedTextColor = TextMuted
+                            selectedIconColor = colors.primary,
+                            selectedTextColor = colors.primary,
+                            indicatorColor = colors.primary.copy(alpha = if (colors.isDark) 0.22f else 0.15f),
+                            unselectedIconColor = colors.textMuted,
+                            unselectedTextColor = colors.textMuted
                         )
                     )
                 }

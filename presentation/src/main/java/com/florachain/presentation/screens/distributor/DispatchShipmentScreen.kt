@@ -37,18 +37,21 @@ fun DispatchShipmentScreen(
     var transportType by remember { mutableStateOf(TransportType.REFRIGERATED_TRUCK) }
     var transportExpanded by remember { mutableStateOf(false) }
 
+    val colors = FloraChainTheme.colors
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = "Distributor Logistics",
+                showThemeToggle = true,
                 actions = {
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = ErrorRose)
+                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
                 }
             )
         },
-        containerColor = DeepSlate
+        containerColor = colors.background
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -209,16 +212,19 @@ fun DispatchShipmentScreen(
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.primary,
+                    contentColor = colors.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(color = DeepSlate, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = colors.onPrimary, modifier = Modifier.size(22.dp))
                 } else {
-                    Text("Dispatch Cold-Chain Shipment", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Dispatch Cold-Chain Shipment", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
             }
         }
