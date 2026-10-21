@@ -8,6 +8,7 @@ build/
 bin/
 gen/
 out/
+release/
 *.apk
 *.aab
 *.ap_
