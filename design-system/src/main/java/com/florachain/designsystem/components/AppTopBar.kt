@@ -25,6 +25,11 @@ import com.florachain.designsystem.BotanicalEmerald
 import com.florachain.designsystem.FloraChainTheme
 import com.florachain.designsystem.LocalThemeController
 
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import com.florachain.designsystem.R
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
@@ -47,12 +52,26 @@ fun AppTopBar(
 
     TopAppBar(
         title = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                color = colors.textPrimary,
-                fontSize = 19.sp
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (!canNavigateBack && title == "FloraChain") {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_florachain_logo),
+                        contentDescription = "FloraChain Logo",
+                        modifier = Modifier
+                            .size(26.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                    )
+                }
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary,
+                    fontSize = 19.sp
+                )
+            }
         },
         navigationIcon = {
             if (canNavigateBack) {

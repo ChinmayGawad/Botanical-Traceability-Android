@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Deep Forest to Luminous Emerald Gradient (Organic Left Half) -->
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0A3D2A"/>
+      <stop offset="35%" stop-color="#059669"/>
+      <stop offset="70%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+
+    <!-- Circuit Trace Gradient (Tech Right Half) -->
+    <linearGradient id="circuitGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#00F5A0"/>
+    </linearGradient>
+
+    <!-- Hexagonal Ledger Ring Gradient -->
+    <linearGradient id="hexRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5A0"/>
+      <stop offset="30%" stop-color="#10B981"/>
+      <stop offset="70%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#0A3D2A"/>
+    </linearGradient>
+
+    <!-- Glowing Apex Node Gradient -->
+    <radialGradient id="apexGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00F5A0"/>
+      <stop offset="70%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#059669" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g id="floraChainMasterMark" filter="url(#softGlow)">
+    
+    <!-- ========================================== -->
+    <!-- 1. HEXAGONAL BLOCKCHAIN NETWORK FRAME      -->
+    <!-- ========================================== -->
+    <!-- Outer Hexagon Boundaries -->
+    <!-- Vertices: Top (256, 76), Top-Right (412, 166), Bottom-Right (412, 346), Bottom (256, 436), Bottom-Left (100, 346), Top-Left (100, 166) -->
+    <polygon points="256,76 412,166 412,346 256,436 100,346 100,166" 
+             stroke="url(#hexRingGrad)" 
+             stroke-width="7" 
+             stroke-linejoin="round" 
+             stroke-linecap="round"/>
+
+    <!-- Geometric Consensus Network Struts (Interconnected Ledger Lines) -->
+    <!-- Left Network Mesh -->
+    <line x1="100" y1="166" x2="160" y2="131" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="100" y1="166" x2="148" y2="200" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="100" y1="256" x2="148" y2="200" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="100" y1="256" x2="148" y2="312" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="100" y1="346" x2="148" y2="312" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="100" y1="346" x2="160" y2="381" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="160" y1="131" x2="256" y2="76" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="160" y1="381" x2="256" y2="436" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Right Network Mesh -->
+    <line x1="412" y1="166" x2="352" y2="131" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="412" y1="166" x2="364" y2="200" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="412" y1="256" x2="364" y2="200" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="412" y1="256" x2="364" y2="312" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="412" y1="346" x2="364" y2="312" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="412" y1="346" x2="352" y2="381" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="352" y1="131" x2="256" y2="76" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="352" y1="381" x2="256" y2="436" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Internal Connector Links to Leaf -->
+    <line x1="148" y1="200" x2="190" y2="216" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="148" y1="312" x2="190" y2="296" stroke="url(#hexRingGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="364" y1="200" x2="322" y2="216" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="364" y1="312" x2="322" y2="296" stroke="url(#circuitGrad)" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- ========================================== -->
+    <!-- 2. CENTRAL BOTANICAL LEAF CONTOUR          -->
+    <!-- ========================================== -->
+    <!-- Outer Leaf Perimeter -->
+    <!-- Spans from top apex (256, 100) to bottom stem (256, 420) -->
+    <!-- Left Organic Contour -->
+    <path d="M 256 100 
+             C 178 150 144 240 168 324 
+             C 186 386 230 412 256 420 
+             C 256 420 256 100 256 100 Z" 
+          stroke="url(#leafGrad)" 
+          stroke-width="7" 
+          stroke-linejoin="round"/>
+
+    <!-- Right Tech Contour -->
+    <path d="M 256 100 
+             C 334 150 368 240 344 324 
+             C 326 386 282 412 256 420 
+             C 256 420 256 100 256 100 Z" 
+          stroke="url(#circuitGrad)" 
+          stroke-width="7" 
+          stroke-linejoin="round"/>
+
+    <!-- Central Vertical Stem Spine -->
+    <line x1="256" y1="100" x2="256" y2="436" stroke="url(#leafGrad)" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- ========================================== -->
+    <!-- 3. LEFT HALF: ORGANIC BOTANICAL VEINS      -->
+    <!-- ========================================== -->
+    <!-- Layered organic curved lobes inside left leaf -->
+    <!-- Lobe 1 (Top) -->
+    <path d="M 256 160 C 228 175 204 198 188 226" 
+          stroke="url(#leafGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+    
+    <!-- Lobe 2 (Upper Middle) -->
+    <path d="M 256 216 C 218 234 186 264 172 300" 
+          stroke="url(#leafGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+
+    <!-- Lobe 3 (Lower Middle) -->
+    <path d="M 256 276 C 224 296 198 326 190 354" 
+          stroke="url(#leafGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+
+    <!-- Lobe 4 (Base) -->
+    <path d="M 256 340 C 238 358 222 380 216 398" 
+          stroke="url(#leafGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round"/>
+
+    <!-- Filled Organic Shading Accents (Lush herbal depth) -->
+    <path d="M 256 160 C 228 175 204 198 188 226 C 204 220 236 190 256 185 Z" fill="#10B981" fill-opacity="0.25"/>
+    <path d="M 256 216 C 218 234 186 264 172 300 C 190 290 230 255 256 245 Z" fill="#059669" fill-opacity="0.30"/>
+    <path d="M 256 276 C 224 296 198 326 190 354 C 206 340 234 310 256 304 Z" fill="#0A3D2A" fill-opacity="0.35"/>
+
+    <!-- ========================================== -->
+    <!-- 4. RIGHT HALF: CRYPTOGRAPHIC PCB CIRCUITS  -->
+    <!-- ========================================== -->
+    <!-- Circuit Trace 1 (Top) -->
+    <path d="M 256 160 L 284 176 L 284 212 L 314 228" 
+          fill="none" 
+          stroke="url(#circuitGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+
+    <!-- Circuit Trace 2 (Upper Middle) -->
+    <path d="M 256 216 L 298 216 L 316 234 L 316 270" 
+          fill="none" 
+          stroke="url(#circuitGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+
+    <!-- Circuit Trace 3 (Center to Edge) -->
+    <path d="M 256 276 L 290 276 L 308 294 L 340 294" 
+          fill="none" 
+          stroke="url(#circuitGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+
+    <!-- Circuit Trace 4 (Lower Middle) -->
+    <path d="M 256 340 L 282 340 L 304 362 L 324 350" 
+          fill="none" 
+          stroke="url(#circuitGrad)" 
+          stroke-width="6" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+
+    <!-- Circuit Terminal Sensor Dots -->
+    <circle cx="314" cy="228" r="7" fill="#00F5A0"/>
+    <circle cx="316" cy="270" r="7" fill="#00F5A0"/>
+    <circle cx="340" cy="294" r="7" fill="#00F5A0"/>
+    <circle cx="324" cy="350" r="7" fill="#00F5A0"/>
+    <circle cx="298" cy="216" r="5" fill="#10B981"/>
+    <circle cx="282" cy="340" r="5" fill="#10B981"/>
+
+    <!-- ========================================== -->
+    <!-- 5. VERIFICATION NODES & APEX LEDS          -->
+    <!-- ========================================== -->
+    <!-- Hexagon Vertex Nodes -->
+    <circle cx="256" cy="76" r="14" fill="url(#apexGlow)"/>
+    <circle cx="256" cy="76" r="6" fill="#FFFFFF"/>
+
+    <circle cx="412" cy="166" r="10" fill="#059669"/>
+    <circle cx="412" cy="166" r="4.5" fill="#00F5A0"/>
+
+    <circle cx="412" cy="256" r="10" fill="#059669"/>
+    <circle cx="412" cy="256" r="4.5" fill="#00F5A0"/>
+
+    <circle cx="412" cy="346" r="10" fill="#059669"/>
+    <circle cx="412" cy="346" r="4.5" fill="#00F5A0"/>
+
+    <circle cx="256" cy="436" r="13" fill="#0A3D2A"/>
+    <circle cx="256" cy="436" r="5.5" fill="#10B981"/>
+
+    <circle cx="100" cy="346" r="10" fill="#0A3D2A"/>
+    <circle cx="100" cy="346" r="4.5" fill="#10B981"/>
+
+    <circle cx="100" cy="256" r="10" fill="#059669"/>
+    <circle cx="100" cy="256" r="4.5" fill="#10B981"/>
+
+    <circle cx="100" cy="166" r="10" fill="#059669"/>
+    <circle cx="100" cy="166" r="4.5" fill="#34D399"/>
+
+    <!-- Mesh Intersection Nodes -->
+    <circle cx="160" cy="131" r="8" fill="#10B981"/>
+    <circle cx="148" cy="200" r="8" fill="#10B981"/>
+    <circle cx="148" cy="312" r="8" fill="#059669"/>
+    <circle cx="160" cy="381" r="8" fill="#0A3D2A"/>
+
+    <circle cx="352" cy="131" r="8" fill="#00F5A0"/>
+    <circle cx="364" cy="200" r="8" fill="#10B981"/>
+    <circle cx="364" cy="312" r="8" fill="#059669"/>
+    <circle cx="352" cy="381" r="8" fill="#0A3D2A"/>
+  </g>
+</svg>

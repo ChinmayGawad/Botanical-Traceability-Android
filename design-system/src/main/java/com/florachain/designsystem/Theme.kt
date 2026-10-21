@@ -70,8 +70,8 @@ val LightFloraChainColors = FloraChainColors(
     glassBorder = GlassBorderLight,
     primary = ForestGreen,
     onPrimary = Color.White,
-    primaryContainer = BotanicalLight,
-    onPrimaryContainer = BotanicalDark,
+    primaryContainer = Color(0xFFEBF5EE),
+    onPrimaryContainer = ForestGreen,
     secondary = BotanicalEmerald,
     accent = HarvestGold,
     textPrimary = LightTextPrimary,
@@ -83,9 +83,9 @@ val LightFloraChainColors = FloraChainColors(
     infoBlue = InfoBlue,
     cardBorderBrush = Brush.linearGradient(
         listOf(
-            Color(0xFF6EE7B7),
-            Color(0xFFA7F3D0),
-            Color(0xFF6EE7B7)
+            Color(0xFFE5E7EB),
+            Color(0xFFF1F3F5),
+            Color(0xFFE5E7EB)
         )
     ),
     isDark = false
@@ -123,8 +123,8 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = ForestGreen,
     onPrimary = Color.White,
-    primaryContainer = BotanicalLight,
-    onPrimaryContainer = BotanicalDark,
+    primaryContainer = Color(0xFFEBF5EE),
+    onPrimaryContainer = ForestGreen,
     secondary = BotanicalEmerald,
     onSecondary = Color.White,
     background = LightBackground,

@@ -1,11 +1,14 @@
 package com.florachain.presentation.screens.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -207,19 +210,13 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 // App Branding Icon & Title
-                Box(
+                Image(
+                    painter = painterResource(id = com.florachain.designsystem.R.drawable.ic_florachain_logo),
+                    contentDescription = "FloraChain Logo",
                     modifier = Modifier
-                        .size(64.dp)
-                        .background(colors.primaryContainer, RoundedCornerShape(20.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Eco,
-                        contentDescription = null,
-                        tint = colors.primary,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
+                        .size(76.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                )
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(

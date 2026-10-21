@@ -26,16 +26,16 @@ val GlassBorderDark = Color(0x4010B981) // 25% emerald
 val GlassSurfaceDark = Color(0xBF131D31) // Translucent obsidian
 
 // ==========================================
-// ☀️ Fresh Biophilic Light Mode Tokens
+// ☀️ Clean Modern Cream & Forest Light Mode Tokens (Apple / Notion Luxury)
 // ==========================================
-val LightBackground = Color(0xFFF3FAF5)
-val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceLightElevated = Color(0xFFE9F7EF)
-val GlassBorderLight = Color(0xFFBCECD2) // Soft fresh emerald border
-val GlassSurfaceLight = Color(0xF2FFFFFF) // Frosted white tint
-val LightTextPrimary = Color(0xFF0E2A1E)
-val LightTextSecondary = Color(0xFF355245)
-val LightTextMuted = Color(0xFF68877A)
+val LightBackground = Color(0xFFFBFBFA) // Soft warm ivory / premium paper
+val SurfaceLight = Color(0xFFFFFFFF) // Crisp pure white cards
+val SurfaceLightElevated = Color(0xFFF4F4F0) // Refined warm ivory elevated surface
+val GlassBorderLight = Color(0xFFE8E8E3) // Hairline warm neutral border (Apple-style)
+val GlassSurfaceLight = Color(0xF7FFFFFF) // Pure frosted glass
+val LightTextPrimary = Color(0xFF0D281E) // Ultra-crisp rich black-green text
+val LightTextSecondary = Color(0xFF4A5D54) // Refined warm slate / muted green
+val LightTextMuted = Color(0xFF788D83) // Elegant neutral muted metadata
 
 // ==========================================
 // 🛡️ Status & Trust Indicators (Both Modes)

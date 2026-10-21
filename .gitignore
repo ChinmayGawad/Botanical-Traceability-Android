@@ -94,3 +94,12 @@ android_app_implementation_plan.md
 .agents/
 .gemini/
 
+# --- Python & Script Tooling ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
