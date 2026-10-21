@@ -65,13 +65,13 @@ fun LoginScreen(
                 Box(
                     modifier = Modifier
                         .size(68.dp)
-                        .background(BotanicalDark, RoundedCornerShape(20.dp)),
+                        .background(colors.primaryContainer, RoundedCornerShape(20.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = null,
-                        tint = BotanicalEmerald,
+                        tint = colors.primary,
                         modifier = Modifier.size(38.dp)
                     )
                 }
@@ -81,18 +81,18 @@ fun LoginScreen(
                         text = user.name.ifBlank { "Authenticated Stakeholder" },
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = colors.textPrimary
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Surface(
-                        color = BotanicalEmerald.copy(alpha = 0.15f),
+                        color = colors.primary.copy(alpha = 0.15f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
                             text = "${user.role.name} PORTAL ACTIVE",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = BotanicalEmerald,
+                            color = colors.primary,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                         )
                     }
@@ -104,16 +104,16 @@ fun LoginScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Email", color = TextSecondary, fontSize = 13.sp)
-                            Text(user.email, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text("Email", color = colors.textSecondary, fontSize = 13.sp)
+                            Text(user.email, color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                         }
                         user.organization?.takeIf { it.isNotBlank() }?.let { org ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Organization", color = TextSecondary, fontSize = 13.sp)
-                                Text(org, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                                Text("Organization", color = colors.textSecondary, fontSize = 13.sp)
+                                Text(org, color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             }
                         }
                         user.location?.takeIf { it.isNotBlank() }?.let { loc ->
@@ -121,8 +121,8 @@ fun LoginScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Location", color = TextSecondary, fontSize = 13.sp)
-                                Text(loc, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                                Text("Location", color = colors.textSecondary, fontSize = 13.sp)
+                                Text(loc, color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             }
                         }
                         user.aadhaarNumber?.takeIf { it.isNotBlank() }?.let { aadhaar ->
@@ -130,8 +130,8 @@ fun LoginScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Aadhaar", color = TextSecondary, fontSize = 13.sp)
-                                Text("•••• •••• " + aadhaar.takeLast(4), color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                                Text("Aadhaar", color = colors.textSecondary, fontSize = 13.sp)
+                                Text("•••• •••• " + aadhaar.takeLast(4), color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
@@ -139,21 +139,24 @@ fun LoginScreen(
 
                 Button(
                     onClick = { onLoginSuccess(user.role) },
-                    colors = ButtonDefaults.buttonColors(containerColor = BotanicalEmerald),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimary
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
                 ) {
-                    Icon(Icons.Default.Dashboard, contentDescription = null, tint = DeepSlate)
+                    Icon(Icons.Default.Dashboard, contentDescription = null, tint = colors.onPrimary)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Go to ${user.role.name} Dashboard", color = DeepSlate, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Go to ${user.role.name} Dashboard", color = colors.onPrimary, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
 
                 Text(
                     text = "Switch Stakeholder Demo Role",
                     fontSize = 12.sp,
-                    color = TextMuted,
+                    color = colors.textMuted,
                     fontWeight = FontWeight.Medium
                 )
                 LazyRow(
@@ -173,10 +176,10 @@ fun LoginScreen(
                             onClick = { viewModel.switchRole(role) },
                             label = { Text(role.name, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = BotanicalEmerald,
-                                selectedLabelColor = Color.Black,
-                                containerColor = SurfaceDark,
-                                labelColor = TextSecondary
+                                selectedContainerColor = colors.primary,
+                                selectedLabelColor = colors.onPrimary,
+                                containerColor = colors.surfaceElevated,
+                                labelColor = colors.textSecondary
                             )
                         )
                     }
@@ -207,13 +210,13 @@ fun LoginScreen(
                 Box(
                     modifier = Modifier
                         .size(64.dp)
-                        .background(BotanicalDark, RoundedCornerShape(20.dp)),
+                        .background(colors.primaryContainer, RoundedCornerShape(20.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Eco,
                         contentDescription = null,
-                        tint = BotanicalEmerald,
+                        tint = colors.primary,
                         modifier = Modifier.size(36.dp)
                     )
                 }
@@ -223,12 +226,12 @@ fun LoginScreen(
                         text = "FloraChain",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = colors.textPrimary
                     )
                     Text(
                         text = "Native Botanical Traceability & Blockchain Sync",
                         fontSize = 13.sp,
-                        color = TextSecondary
+                        color = colors.textSecondary
                     )
                 }
 
@@ -236,7 +239,7 @@ fun LoginScreen(
                 Text(
                     text = "Fast Demo Role Switcher",
                     fontSize = 12.sp,
-                    color = TextMuted,
+                    color = colors.textMuted,
                     fontWeight = FontWeight.Medium
                 )
                 LazyRow(
@@ -262,10 +265,10 @@ fun LoginScreen(
                             },
                             label = { Text(role.name, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = BotanicalEmerald,
-                                selectedLabelColor = Color.Black,
-                                containerColor = SurfaceDark,
-                                labelColor = TextSecondary
+                                selectedContainerColor = colors.primary,
+                                selectedLabelColor = colors.onPrimary,
+                                containerColor = colors.surfaceElevated,
+                                labelColor = colors.textSecondary
                             )
                         )
                     }
@@ -277,16 +280,9 @@ fun LoginScreen(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text("Email Address") },
-                        leadingIcon = { Icon(Icons.Default.Mail, contentDescription = null, tint = BotanicalEmerald) },
+                        leadingIcon = { Icon(Icons.Default.Mail, contentDescription = null, tint = colors.primary) },
                         singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -296,18 +292,11 @@ fun LoginScreen(
                         value = password,
                         onValueChange = { password = it },
                         label = { Text("Password") },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = BotanicalEmerald) },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = colors.primary) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -348,22 +337,22 @@ fun LoginScreen(
                             // Demo quick biometric unlock with current credentials
                             viewModel.login(email, password)
                         },
-                        border = ButtonDefaults.outlinedButtonBorder.copy(brush = SolidColor(MintAccent)),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(brush = SolidColor(colors.primary)),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp)
                     ) {
-                        Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MintAccent)
+                        Icon(Icons.Default.Fingerprint, contentDescription = null, tint = colors.primary)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Biometric Fast Unlock", color = MintAccent, fontWeight = FontWeight.SemiBold)
+                        Text("Biometric Fast Unlock", color = colors.primary, fontWeight = FontWeight.SemiBold)
                     }
                 }
 
                 TextButton(onClick = onNavigateToRegister) {
                     Text(
                         text = "New Stakeholder? Register with Aadhaar",
-                        color = MintAccent,
+                        color = colors.primary,
                         fontSize = 13.sp
                     )
                 }

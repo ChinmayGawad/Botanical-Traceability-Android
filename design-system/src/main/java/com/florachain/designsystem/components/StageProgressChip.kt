@@ -12,10 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.florachain.designsystem.BotanicalDark
-import com.florachain.designsystem.BotanicalEmerald
-import com.florachain.designsystem.SurfaceDarkElevated
-import com.florachain.designsystem.TextMuted
+import com.florachain.designsystem.FloraChainTheme
 
 @Composable
 fun StageProgressChip(
@@ -25,16 +22,18 @@ fun StageProgressChip(
     isCurrent: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val colors = com.florachain.designsystem.FloraChainTheme.colors
+
     val bgColor = when {
-        isCompleted -> BotanicalEmerald
-        isCurrent -> BotanicalDark
-        else -> SurfaceDarkElevated
+        isCompleted -> colors.primary
+        isCurrent -> colors.primaryContainer
+        else -> colors.surfaceElevated
     }
 
     val textColor = when {
-        isCompleted -> Color.Black
-        isCurrent -> BotanicalEmerald
-        else -> TextMuted
+        isCompleted -> colors.onPrimary
+        isCurrent -> colors.onPrimaryContainer
+        else -> colors.textMuted
     }
 
     Row(

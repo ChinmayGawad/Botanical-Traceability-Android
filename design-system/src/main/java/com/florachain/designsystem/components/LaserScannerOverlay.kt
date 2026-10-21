@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -46,6 +47,27 @@ fun LaserScannerOverlay(
         ),
         label = "BracketPulse"
     )
+
+    // Pre-allocated gradient color lists to prevent 60-120Hz GC churn
+    val verticalGradientColors = remember(laserColor) {
+        listOf(
+            Color.Transparent,
+            laserColor.copy(alpha = 0.25f),
+            MintAccent.copy(alpha = 0.5f),
+            laserColor.copy(alpha = 0.25f),
+            Color.Transparent
+        )
+    }
+
+    val horizontalGradientColors = remember(laserColor) {
+        listOf(
+            Color.Transparent,
+            laserColor,
+            MintAccent,
+            laserColor,
+            Color.Transparent
+        )
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -148,13 +170,7 @@ fun LaserScannerOverlay(
                 // Diffuse glow
                 drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            laserColor.copy(alpha = 0.25f),
-                            MintAccent.copy(alpha = 0.5f),
-                            laserColor.copy(alpha = 0.25f),
-                            Color.Transparent
-                        ),
+                        colors = verticalGradientColors,
                         startY = currentLaserY - beamHeight,
                         endY = currentLaserY + beamHeight
                     ),
@@ -164,15 +180,7 @@ fun LaserScannerOverlay(
 
                 // Crisp Center Laser Line
                 drawLine(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            Color.Transparent,
-                            laserColor,
-                            MintAccent,
-                            laserColor,
-                            Color.Transparent
-                        )
-                    ),
+                    brush = Brush.horizontalGradient(horizontalGradientColors),
                     start = Offset(0f, currentLaserY),
                     end = Offset(width, currentLaserY),
                     strokeWidth = 2.5.dp.toPx(),

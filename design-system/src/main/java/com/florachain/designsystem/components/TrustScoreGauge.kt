@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -44,13 +45,15 @@ fun TrustScoreGauge(
         else -> colors.errorRose
     }
 
-    val gradientBrush = Brush.sweepGradient(
-        colors = listOf(
-            colors.secondary,
-            gaugeColor,
-            colors.secondary
+    val gradientBrush = remember(colors.secondary, gaugeColor) {
+        Brush.sweepGradient(
+            colors = listOf(
+                colors.secondary,
+                gaugeColor,
+                colors.secondary
+            )
         )
-    )
+    }
 
     Box(
         modifier = modifier.size(gaugeSize),

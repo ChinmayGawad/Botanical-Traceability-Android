@@ -52,7 +52,7 @@ fun HomeScreen(
     var isBatchesExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
-    val categoryFilters = listOf("All", "Ashwagandha", "Tulsi", "Turmeric", "Brahmi")
+    val categoryFilters = remember { listOf("All", "Ashwagandha", "Tulsi", "Turmeric", "Brahmi") }
 
     Scaffold(
         topBar = {
@@ -456,13 +456,15 @@ fun HomeScreen(
                     letterSpacing = 1.sp
                 )
 
-                val stages = listOf(
-                    StageInfo("01", "Farmer Genesis", "GPS Geotagging, Harvest Timestamps & NPOP Organic CID", Icons.Default.Agriculture),
-                    StageInfo("02", "Processor Milling", "Milling <45°C, Mass Balance Delta & GMP Audit Hash", Icons.Default.PrecisionManufacturing),
-                    StageInfo("03", "Laboratory Assay", "HPLC Active Purity, Heavy Metal ICP-MS & ISO/IEC 17025", Icons.Default.Biotech),
-                    StageInfo("04", "Distributor IoT", "Cold-Chain Live Telematics (2-8°C) & Tamper Seal ID", Icons.Default.LocalShipping),
-                    StageInfo("05", "Retailer Monograph", "Digital Authenticity Monograph & Consumer Trust Scan", Icons.Default.Storefront)
-                )
+                val stages = remember {
+                    listOf(
+                        StageInfo("01", "Farmer Genesis", "GPS Geotagging, Harvest Timestamps & NPOP Organic CID", Icons.Default.Agriculture),
+                        StageInfo("02", "Processor Milling", "Milling <45°C, Mass Balance Delta & GMP Audit Hash", Icons.Default.PrecisionManufacturing),
+                        StageInfo("03", "Laboratory Assay", "HPLC Active Purity, Heavy Metal ICP-MS & ISO/IEC 17025", Icons.Default.Biotech),
+                        StageInfo("04", "Distributor IoT", "Cold-Chain Live Telematics (2-8°C) & Tamper Seal ID", Icons.Default.LocalShipping),
+                        StageInfo("05", "Retailer Monograph", "Digital Authenticity Monograph & Consumer Trust Scan", Icons.Default.Storefront)
+                    )
+                }
 
                 stages.forEach { stage ->
                     Surface(
@@ -593,7 +595,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(categoryFilters) { filter ->
+                    items(categoryFilters, key = { it }) { filter ->
                         val isSelected = selectedCategoryFilter == filter
                         val chipBg by animateColorAsState(
                             targetValue = if (isSelected) colors.primary else colors.glassSurface,
@@ -627,13 +629,17 @@ fun HomeScreen(
                     }
                 }
 
-                val filteredProducts = uiState.products.filter { prod ->
-                    if (selectedCategoryFilter == "All") true
-                    else prod.name.contains(selectedCategoryFilter, ignoreCase = true) ||
-                            prod.botanicalName.contains(selectedCategoryFilter, ignoreCase = true)
+                val filteredProducts = remember(uiState.products, selectedCategoryFilter) {
+                    if (selectedCategoryFilter == "All") uiState.products
+                    else uiState.products.filter { prod ->
+                        prod.name.contains(selectedCategoryFilter, ignoreCase = true) ||
+                                prod.botanicalName.contains(selectedCategoryFilter, ignoreCase = true)
+                    }
                 }
 
-                val displayedBatches = if (isBatchesExpanded) filteredProducts else filteredProducts.take(3)
+                val displayedBatches = remember(filteredProducts, isBatchesExpanded) {
+                    if (isBatchesExpanded) filteredProducts else filteredProducts.take(3)
+                }
 
                 if (displayedBatches.isEmpty()) {
                     Surface(
@@ -651,13 +657,15 @@ fun HomeScreen(
                     }
                 } else {
                     displayedBatches.forEach { prod ->
-                        CompactBatchCard(
-                            product = prod,
-                            onClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                onNavigateToDetails(prod.id)
-                            }
-                        )
+                        key(prod.id) {
+                            CompactBatchCard(
+                                product = prod,
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    onNavigateToDetails(prod.id)
+                                }
+                            )
+                        }
                     }
                 }
             }

@@ -96,17 +96,10 @@ fun RegisterHarvestScreen(
                         IconButton(onClick = {
                             batchId = "ASHWA-" + UUID.randomUUID().toString().take(6).uppercase()
                         }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Regenerate", tint = BotanicalEmerald)
+                            Icon(Icons.Default.Refresh, contentDescription = "Regenerate", tint = colors.primary)
                         }
                     },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -116,14 +109,7 @@ fun RegisterHarvestScreen(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Common Crop Name") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -133,14 +119,7 @@ fun RegisterHarvestScreen(
                     value = botanicalName,
                     onValueChange = { botanicalName = it },
                     label = { Text("Botanical Taxon / Species") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -157,14 +136,7 @@ fun RegisterHarvestScreen(
                         readOnly = true,
                         label = { Text("Cultivation Practice") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = methodExpanded) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth()
@@ -193,14 +165,7 @@ fun RegisterHarvestScreen(
                     onValueChange = { quantityKgText = it },
                     label = { Text("Harvest Quantity (kg)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -211,7 +176,7 @@ fun RegisterHarvestScreen(
                     text = "Agricultural Origin & Geotagging",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -219,14 +184,7 @@ fun RegisterHarvestScreen(
                     value = farmLocation,
                     onValueChange = { farmLocation = it },
                     label = { Text("Farm Address / Region") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -238,24 +196,24 @@ fun RegisterHarvestScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(BotanicalDark.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
                             .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = BotanicalEmerald)
+                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = colors.primary)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text(
                                 text = "Geotagged Coordinates:",
                                 fontSize = 11.sp,
-                                color = TextMuted
+                                color = colors.textMuted
                             )
                             Text(
                                 text = "${coords.latitude}, ${coords.longitude} (±${coords.accuracyMeters.toInt()}m)",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = FontFamily.Monospace,
-                                color = MintAccent
+                                color = colors.primary
                             )
                         }
                     }
@@ -264,18 +222,21 @@ fun RegisterHarvestScreen(
 
                 Button(
                     onClick = { viewModel.captureCurrentGps() },
-                    colors = ButtonDefaults.buttonColors(containerColor = SurfaceDarkElevated),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.surfaceElevated,
+                        contentColor = colors.primary
+                    ),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     if (uiState.isLocationCapturing) {
-                        CircularProgressIndicator(modifier = Modifier.size(18.dp), color = BotanicalEmerald)
+                        CircularProgressIndicator(modifier = Modifier.size(18.dp), color = colors.primary)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Reading Satellite Coordinates...", color = BotanicalEmerald)
+                        Text("Reading Satellite Coordinates...", color = colors.primary)
                     } else {
-                        Icon(Icons.Default.MyLocation, contentDescription = null, tint = BotanicalEmerald)
+                        Icon(Icons.Default.MyLocation, contentDescription = null, tint = colors.primary)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (coords != null) "Re-capture GPS Location" else "Capture Farm GPS Location", color = BotanicalEmerald)
+                        Text(if (coords != null) "Re-capture GPS Location" else "Capture Farm GPS Location", color = colors.primary)
                     }
                 }
             }
@@ -292,7 +253,7 @@ fun RegisterHarvestScreen(
                 Text(
                     text = "Offline-first enabled: saves locally if out of cell range",
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = colors.textMuted
                 )
             }
 

@@ -14,10 +14,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.florachain.designsystem.BotanicalEmerald
 import com.florachain.designsystem.FloraChainTheme
-import com.florachain.designsystem.MintAccent
 
 data class NodeInfo(
     val name: String,
@@ -59,13 +59,15 @@ fun ConsensusNodeStrip(
         label = "PulseAlpha"
     )
 
-    val nodes = listOf(
-        NodeInfo("Farm", Icons.Default.Agriculture, "Genesis"),
-        NodeInfo("Mill", Icons.Default.PrecisionManufacturing, "<45°C"),
-        NodeInfo("Lab", Icons.Default.Biotech, "HPLC"),
-        NodeInfo("Cold", Icons.Default.LocalShipping, "4.2°C"),
-        NodeInfo("Retail", Icons.Default.Storefront, "Verified")
-    )
+    val nodes = remember {
+        listOf(
+            NodeInfo("Farm", Icons.Default.Agriculture, "Genesis"),
+            NodeInfo("Mill", Icons.Default.PrecisionManufacturing, "<45°C"),
+            NodeInfo("Lab", Icons.Default.Biotech, "HPLC"),
+            NodeInfo("Cold", Icons.Default.LocalShipping, "4.2°C"),
+            NodeInfo("Retail", Icons.Default.Storefront, "Verified")
+        )
+    }
 
     CyberGlassCard(
         modifier = modifier.fillMaxWidth(),
@@ -82,13 +84,17 @@ fun ConsensusNodeStrip(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Pulsing Consensus LED
+                // Pulsing Consensus LED (Draw-phase deferred, 0 recomposition)
                 Box(contentAlignment = Alignment.Center) {
                     Box(
                         modifier = Modifier
                             .size(14.dp)
-                            .scale(pulseScale)
-                            .background(BotanicalEmerald.copy(alpha = pulseAlpha * 0.35f), CircleShape)
+                            .graphicsLayer {
+                                scaleX = pulseScale
+                                scaleY = pulseScale
+                                alpha = pulseAlpha * 0.35f
+                            }
+                            .background(BotanicalEmerald, CircleShape)
                     )
                     Box(
                         modifier = Modifier
@@ -173,13 +179,16 @@ fun ConsensusNodeStrip(
                     )
                 }
 
-                // Connecting arrow or line between nodes
+                // Connecting arrow or line between nodes (Draw-phase deferred)
                 if (index < nodes.size - 1) {
                     Box(
                         modifier = Modifier
                             .height(2.dp)
                             .width(10.dp)
-                            .background(colors.primary.copy(alpha = pulseAlpha * 0.7f))
+                            .graphicsLayer {
+                                alpha = pulseAlpha * 0.7f
+                            }
+                            .background(colors.primary)
                     )
                 }
             }

@@ -80,11 +80,11 @@ fun StockIntakeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(BotanicalDark.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
-                        Text(prod.name, fontWeight = FontWeight.Bold, color = TextPrimary)
-                        Text("Batch: ${prod.batchId} • Botanical: ${prod.botanicalName}", fontSize = 12.sp, color = TextSecondary)
+                        Text(prod.name, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                        Text("Batch: ${prod.batchId} • Botanical: ${prod.botanicalName}", fontSize = 12.sp, color = colors.textSecondary)
                     }
                 }
 
@@ -95,7 +95,8 @@ fun StockIntakeScreen(
                     Button(
                         onClick = { viewModel.selectProduct(p) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) BotanicalEmerald else SurfaceDarkElevated
+                            containerColor = if (isSelected) colors.primary else colors.surfaceElevated,
+                            contentColor = if (isSelected) colors.onPrimary else colors.textPrimary
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -103,7 +104,7 @@ fun StockIntakeScreen(
                     ) {
                         Text(
                             text = "${p.name} (${p.batchId})",
-                            color = if (isSelected) DeepSlate else TextPrimary,
+                            color = if (isSelected) colors.onPrimary else colors.textPrimary,
                             fontSize = 13.sp
                         )
                     }
@@ -116,7 +117,7 @@ fun StockIntakeScreen(
                     text = "Store Placement & Shelf Price",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -124,14 +125,7 @@ fun StockIntakeScreen(
                     value = storeLocation,
                     onValueChange = { storeLocation = it },
                     label = { Text("Store Location") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -141,14 +135,7 @@ fun StockIntakeScreen(
                     value = shelfBatchId,
                     onValueChange = { shelfBatchId = it },
                     label = { Text("Shelf / Aisle Code") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -159,14 +146,7 @@ fun StockIntakeScreen(
                     onValueChange = { unitPriceText = it },
                     label = { Text("Consumer Retail Price (₹)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -175,14 +155,14 @@ fun StockIntakeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(BotanicalDark.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                        .background(colors.primaryContainer.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
                         .padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(Icons.Default.QrCode, contentDescription = null, tint = BotanicalEmerald, modifier = Modifier.size(48.dp))
+                    Icon(Icons.Default.QrCode, contentDescription = null, tint = colors.primary, modifier = Modifier.size(48.dp))
                     Spacer(modifier = Modifier.height(6.dp))
                     Text("✓ Product Intake Complete & Consumer QR Active!", color = TrustGreen, fontWeight = FontWeight.Bold)
-                    Text("Customers can scan QR to view complete cryptographic provenance", color = TextSecondary, fontSize = 12.sp)
+                    Text("Customers can scan QR to view complete cryptographic provenance", color = colors.textSecondary, fontSize = 12.sp)
                 }
             }
 

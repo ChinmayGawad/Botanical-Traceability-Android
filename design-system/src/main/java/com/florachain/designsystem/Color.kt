@@ -1,5 +1,6 @@
 package com.florachain.designsystem
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
@@ -49,13 +50,31 @@ val InfoBlue = Color(0xFF38BDF8)
 val InfoBlueLight = Color(0xFFE0F2FE)
 
 // ==========================================
-// 📝 Legacy Neutral Compatibility
+// 📝 Legacy Neutral Compatibility (Theme-Adaptive)
 // ==========================================
-val GlassBorder = GlassBorderDark
-val GlassSurface = GlassSurfaceDark
-val TextPrimary = Color(0xFFF8FAFC)
-val TextSecondary = Color(0xFF94A3B8)
-val TextMuted = Color(0xFF64748B)
+val DarkTextPrimary = Color(0xFFF8FAFC)
+val DarkTextSecondary = Color(0xFF94A3B8)
+val DarkTextMuted = Color(0xFF64748B)
+
+val TextPrimary: Color
+    @Composable
+    get() = FloraChainTheme.colors.textPrimary
+
+val TextSecondary: Color
+    @Composable
+    get() = FloraChainTheme.colors.textSecondary
+
+val TextMuted: Color
+    @Composable
+    get() = FloraChainTheme.colors.textMuted
+
+val GlassBorder: Color
+    @Composable
+    get() = FloraChainTheme.colors.glassBorder
+
+val GlassSurface: Color
+    @Composable
+    get() = FloraChainTheme.colors.glassSurface
 
 // ==========================================
 // 🎨 Dynamic Gradients & Glow Brushes

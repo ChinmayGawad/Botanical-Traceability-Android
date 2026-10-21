@@ -85,11 +85,11 @@ fun RecordAssayScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(BotanicalDark.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
-                        Text(prod.name, fontWeight = FontWeight.Bold, color = TextPrimary)
-                        Text("Batch: ${prod.batchId} • Origin: ${prod.farmLocation}", fontSize = 12.sp, color = TextSecondary)
+                        Text(prod.name, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                        Text("Batch: ${prod.batchId} • Origin: ${prod.farmLocation}", fontSize = 12.sp, color = colors.textSecondary)
                     }
                 }
 
@@ -100,7 +100,8 @@ fun RecordAssayScreen(
                     Button(
                         onClick = { viewModel.selectProduct(p) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) BotanicalEmerald else SurfaceDarkElevated
+                            containerColor = if (isSelected) colors.primary else colors.surfaceElevated,
+                            contentColor = if (isSelected) colors.onPrimary else colors.textPrimary
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -108,7 +109,7 @@ fun RecordAssayScreen(
                     ) {
                         Text(
                             text = "${p.name} (${p.batchId})",
-                            color = if (isSelected) DeepSlate else TextPrimary,
+                            color = if (isSelected) colors.onPrimary else colors.textPrimary,
                             fontSize = 13.sp
                         )
                     }
@@ -121,7 +122,7 @@ fun RecordAssayScreen(
                     text = "Analytical Chemistry Metrics",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -134,14 +135,7 @@ fun RecordAssayScreen(
                         onValueChange = { purityText = it },
                         label = { Text("Purity % (HPLC)") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
 
@@ -150,14 +144,7 @@ fun RecordAssayScreen(
                         onValueChange = { moistureText = it },
                         label = { Text("Moisture %") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -180,7 +167,7 @@ fun RecordAssayScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Quality Assurance Verdict", fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Text("Quality Assurance Verdict", fontWeight = FontWeight.Bold, color = colors.textPrimary)
                         Text(
                             text = if (isApproved) "Batch meets all pharmacopoeial standards" else "Rejected due to safety non-compliance",
                             fontSize = 12.sp,
@@ -191,8 +178,8 @@ fun RecordAssayScreen(
                         checked = isApproved,
                         onCheckedChange = { isApproved = it },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = BotanicalEmerald,
-                            checkedTrackColor = BotanicalDark
+                            checkedThumbColor = colors.primary,
+                            checkedTrackColor = colors.primary.copy(alpha = 0.35f)
                         )
                     )
                 }
@@ -253,12 +240,13 @@ private fun StatusRow(
     status: TestStatus,
     onStatusChange: (TestStatus) -> Unit
 ) {
+    val colors = FloraChainTheme.colors
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontSize = 12.sp, color = TextSecondary)
+        Text(text = label, fontSize = 12.sp, color = colors.textSecondary)
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             FilterChip(
                 selected = status == TestStatus.PASSED,
@@ -266,7 +254,9 @@ private fun StatusRow(
                 label = { Text("PASS", fontSize = 10.sp) },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = TrustGreen,
-                    selectedLabelColor = Color.White
+                    selectedLabelColor = Color.White,
+                    containerColor = colors.surfaceElevated,
+                    labelColor = colors.textSecondary
                 )
             )
             FilterChip(
@@ -275,7 +265,9 @@ private fun StatusRow(
                 label = { Text("FAIL", fontSize = 10.sp) },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = ErrorRose,
-                    selectedLabelColor = Color.White
+                    selectedLabelColor = Color.White,
+                    containerColor = colors.surfaceElevated,
+                    labelColor = colors.textSecondary
                 )
             )
         }

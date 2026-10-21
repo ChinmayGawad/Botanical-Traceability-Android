@@ -78,11 +78,11 @@ fun DispatchShipmentScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(BotanicalDark.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
-                        Text(prod.name, fontWeight = FontWeight.Bold, color = TextPrimary)
-                        Text("Batch: ${prod.batchId} • Weight: ${prod.quantityKg} kg", fontSize = 12.sp, color = TextSecondary)
+                        Text(prod.name, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                        Text("Batch: ${prod.batchId} • Weight: ${prod.quantityKg} kg", fontSize = 12.sp, color = colors.textSecondary)
                     }
                 }
 
@@ -93,7 +93,8 @@ fun DispatchShipmentScreen(
                     Button(
                         onClick = { viewModel.selectProduct(p) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) BotanicalEmerald else SurfaceDarkElevated
+                            containerColor = if (isSelected) colors.primary else colors.surfaceElevated,
+                            contentColor = if (isSelected) colors.onPrimary else colors.textPrimary
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -101,7 +102,7 @@ fun DispatchShipmentScreen(
                     ) {
                         Text(
                             text = "${p.name} (${p.batchId})",
-                            color = if (isSelected) DeepSlate else TextPrimary,
+                            color = if (isSelected) colors.onPrimary else colors.textPrimary,
                             fontSize = 13.sp
                         )
                     }
@@ -114,7 +115,7 @@ fun DispatchShipmentScreen(
                     text = "Cold-Chain Transit Telemetry",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -122,14 +123,7 @@ fun DispatchShipmentScreen(
                     value = vehicleNumber,
                     onValueChange = { vehicleNumber = it },
                     label = { Text("Vehicle License Number") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -139,14 +133,7 @@ fun DispatchShipmentScreen(
                     value = temperatureRange,
                     onValueChange = { temperatureRange = it },
                     label = { Text("Temperature Threshold Telemetry") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -156,14 +143,7 @@ fun DispatchShipmentScreen(
                     value = sourceLocation,
                     onValueChange = { sourceLocation = it },
                     label = { Text("Source Dispatch Warehouse") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -173,14 +153,7 @@ fun DispatchShipmentScreen(
                     value = destinationLocation,
                     onValueChange = { destinationLocation = it },
                     label = { Text("Destination Delivery Point") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }

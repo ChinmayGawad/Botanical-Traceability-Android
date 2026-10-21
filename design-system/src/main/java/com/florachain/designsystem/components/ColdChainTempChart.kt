@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +24,18 @@ fun ColdChainTempChart(
     labels: List<String> = listOf("02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00")
 ) {
     val colors = FloraChainTheme.colors
+
+    val fillColors = remember(colors.primary) {
+        listOf(
+            colors.primary.copy(alpha = 0.25f),
+            Color.Transparent
+        )
+    }
+    val curveColors = remember(colors.primary, colors.secondary) {
+        listOf(colors.primary, colors.secondary)
+    }
+    val curvePath = remember { Path() }
+    val fillAreaPath = remember { Path() }
 
     CyberGlassCard(
         modifier = modifier.fillMaxWidth(),
@@ -113,34 +126,30 @@ fun ColdChainTempChart(
                 Offset(x, y)
             }
 
-            // ── Draw Smooth Cubic Bezier Line ──
-            val path = Path().apply {
-                if (points.isNotEmpty()) {
-                    moveTo(points[0].x, points[0].y)
-                    for (i in 0 until points.size - 1) {
-                        val current = points[i]
-                        val next = points[i + 1]
-                        val control1 = Offset(current.x + (next.x - current.x) / 2f, current.y)
-                        val control2 = Offset(current.x + (next.x - current.x) / 2f, next.y)
-                        cubicTo(control1.x, control1.y, control2.x, control2.y, next.x, next.y)
-                    }
+            // ── Draw Smooth Cubic Bezier Line (Reusing path object to avoid allocation) ──
+            curvePath.reset()
+            if (points.isNotEmpty()) {
+                curvePath.moveTo(points[0].x, points[0].y)
+                for (i in 0 until points.size - 1) {
+                    val current = points[i]
+                    val next = points[i + 1]
+                    val control1 = Offset(current.x + (next.x - current.x) / 2f, current.y)
+                    val control2 = Offset(current.x + (next.x - current.x) / 2f, next.y)
+                    curvePath.cubicTo(control1.x, control1.y, control2.x, control2.y, next.x, next.y)
                 }
             }
 
-            // Draw Area Fill Under Curve
-            val fillPath = Path().apply {
-                addPath(path)
-                lineTo(width, height)
-                lineTo(0f, height)
-                close()
-            }
+            // Draw Area Fill Under Curve (Reusing fill path)
+            fillAreaPath.reset()
+            fillAreaPath.addPath(curvePath)
+            fillAreaPath.lineTo(width, height)
+            fillAreaPath.lineTo(0f, height)
+            fillAreaPath.close()
+
             drawPath(
-                path = fillPath,
+                path = fillAreaPath,
                 brush = Brush.verticalGradient(
-                    colors = listOf(
-                        colors.primary.copy(alpha = 0.25f),
-                        Color.Transparent
-                    ),
+                    colors = fillColors,
                     startY = 0f,
                     endY = height
                 )
@@ -148,10 +157,8 @@ fun ColdChainTempChart(
 
             // Draw Stroke Curve
             drawPath(
-                path = path,
-                brush = Brush.horizontalGradient(
-                    colors = listOf(colors.primary, colors.secondary)
-                ),
+                path = curvePath,
+                brush = Brush.horizontalGradient(curveColors),
                 style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
             )
 

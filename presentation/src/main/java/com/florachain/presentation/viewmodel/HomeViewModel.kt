@@ -1,5 +1,6 @@
 package com.florachain.presentation.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.florachain.domain.model.BotanicalProduct
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 data class HomeUiState(
     val products: List<BotanicalProduct> = emptyList(),
     val featuredProduct: BotanicalProduct? = null,

@@ -45,9 +45,9 @@ val DarkFloraChainColors = FloraChainColors(
     onPrimaryContainer = BotanicalLight,
     secondary = MintAccent,
     accent = MintAccent,
-    textPrimary = TextPrimary,
-    textSecondary = TextSecondary,
-    textMuted = TextMuted,
+    textPrimary = DarkTextPrimary,
+    textSecondary = DarkTextSecondary,
+    textMuted = DarkTextMuted,
     trustGreen = TrustGreen,
     warningAmber = WarningAmber,
     errorRose = ErrorRose,
@@ -110,11 +110,11 @@ private val DarkColorScheme = darkColorScheme(
     secondary = MintAccent,
     onSecondary = DarkBackground,
     background = DarkBackground,
-    onBackground = TextPrimary,
+    onBackground = DarkTextPrimary,
     surface = SurfaceDark,
-    onSurface = TextPrimary,
+    onSurface = DarkTextPrimary,
     surfaceVariant = SurfaceDarkElevated,
-    onSurfaceVariant = TextSecondary,
+    onSurfaceVariant = DarkTextSecondary,
     outline = GlassBorderDark,
     error = ErrorRose,
     onError = Color.White
@@ -174,3 +174,16 @@ fun FloraChainTheme(
         )
     }
 }
+
+@Composable
+fun floraChainTextFieldColors() = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+    focusedTextColor = FloraChainTheme.colors.textPrimary,
+    unfocusedTextColor = FloraChainTheme.colors.textPrimary,
+    focusedBorderColor = FloraChainTheme.colors.primary,
+    unfocusedBorderColor = FloraChainTheme.colors.glassBorder,
+    focusedContainerColor = FloraChainTheme.colors.surface,
+    unfocusedContainerColor = FloraChainTheme.colors.surface,
+    focusedLabelColor = FloraChainTheme.colors.primary,
+    unfocusedLabelColor = FloraChainTheme.colors.textMuted,
+    cursorColor = FloraChainTheme.colors.primary
+)

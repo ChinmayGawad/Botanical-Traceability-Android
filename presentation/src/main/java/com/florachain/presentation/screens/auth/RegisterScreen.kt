@@ -76,7 +76,7 @@ fun RegisterScreen(
                     text = "Personal & Role Profile",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -85,14 +85,7 @@ fun RegisterScreen(
                     onValueChange = { name = it },
                     label = { Text("Full Name") },
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -104,14 +97,7 @@ fun RegisterScreen(
                     label = { Text("Email Address") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -124,14 +110,7 @@ fun RegisterScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -148,14 +127,7 @@ fun RegisterScreen(
                         readOnly = true,
                         label = { Text("Supply Chain Role") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = roleDropdownExpanded) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth()
@@ -184,7 +156,7 @@ fun RegisterScreen(
                     text = "Identity & Compliance",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -193,14 +165,7 @@ fun RegisterScreen(
                     onValueChange = { organization = it },
                     label = { Text("Organization / Farm Cooperative") },
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -211,14 +176,7 @@ fun RegisterScreen(
                     onValueChange = { location = it },
                     label = { Text("Location (District, State)") },
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -229,16 +187,9 @@ fun RegisterScreen(
                     onValueChange = { if (it.length <= 12) aadhaarNumber = it },
                     label = { Text("Aadhaar Number (12 Digits)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = { Text("e.g. 234567890123", color = TextMuted) },
+                    placeholder = { Text("e.g. 234567890123", color = colors.textMuted) },
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 

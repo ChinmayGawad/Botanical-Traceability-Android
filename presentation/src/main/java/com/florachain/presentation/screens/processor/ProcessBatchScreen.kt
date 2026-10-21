@@ -87,15 +87,15 @@ fun ProcessBatchScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(BotanicalDark.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
-                        Text(prod.name, fontWeight = FontWeight.Bold, color = TextPrimary)
-                        Text(prod.botanicalName, color = MintAccent, fontSize = 13.sp)
-                        Text("Batch ID: ${prod.batchId} • Raw: ${prod.quantityKg} kg", fontSize = 12.sp, color = TextSecondary)
+                        Text(prod.name, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                        Text(prod.botanicalName, color = colors.primary, fontSize = 13.sp)
+                        Text("Batch ID: ${prod.batchId} • Raw: ${prod.quantityKg} kg", fontSize = 12.sp, color = colors.textSecondary)
                     }
                 } else {
-                    Text("Select a batch from available inventory:", fontSize = 13.sp, color = TextMuted)
+                    Text("Select a batch from available inventory:", fontSize = 13.sp, color = colors.textMuted)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -110,7 +110,8 @@ fun ProcessBatchScreen(
                             processedQtyText = (p.quantityKg * 0.1).toString()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) BotanicalEmerald else SurfaceDarkElevated
+                            containerColor = if (isSelected) colors.primary else colors.surfaceElevated,
+                            contentColor = if (isSelected) colors.onPrimary else colors.textPrimary
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -118,7 +119,7 @@ fun ProcessBatchScreen(
                     ) {
                         Text(
                             text = "${p.name} (${p.batchId})",
-                            color = if (isSelected) DeepSlate else TextPrimary,
+                            color = if (isSelected) colors.onPrimary else colors.textPrimary,
                             fontSize = 13.sp
                         )
                     }
@@ -131,7 +132,7 @@ fun ProcessBatchScreen(
                     text = "Extraction Parameters",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
@@ -139,14 +140,7 @@ fun ProcessBatchScreen(
                     value = method,
                     onValueChange = { method = it },
                     label = { Text("Extraction Formula / Method") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -156,14 +150,7 @@ fun ProcessBatchScreen(
                     value = facilityLocation,
                     onValueChange = { facilityLocation = it },
                     label = { Text("Processing Facility Location") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = BotanicalEmerald,
-                        unfocusedBorderColor = GlassBorder,
-                        focusedContainerColor = SurfaceDark,
-                        unfocusedContainerColor = SurfaceDark
-                    ),
+                    colors = floraChainTextFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -178,14 +165,7 @@ fun ProcessBatchScreen(
                         onValueChange = { initialQtyText = it },
                         label = { Text("Raw Input (kg)") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
 
@@ -194,14 +174,7 @@ fun ProcessBatchScreen(
                         onValueChange = { processedQtyText = it },
                         label = { Text("Output Extract (kg)") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedBorderColor = BotanicalEmerald,
-                            unfocusedBorderColor = GlassBorder,
-                            focusedContainerColor = SurfaceDark,
-                            unfocusedContainerColor = SurfaceDark
-                        ),
+                        colors = floraChainTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -212,17 +185,17 @@ fun ProcessBatchScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(SurfaceDarkElevated, RoundedCornerShape(8.dp))
+                        .background(colors.surfaceElevated, RoundedCornerShape(8.dp))
                         .padding(10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Calculated Yield Loss:", fontSize = 13.sp, color = TextMuted)
+                    Text("Calculated Yield Loss:", fontSize = 13.sp, color = colors.textMuted)
                     Text(
                         text = "${String.format("%.1f", yieldLoss)}%",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (yieldLoss < 95.0) MintAccent else WarningAmber
+                        color = if (yieldLoss < 95.0) colors.primary else WarningAmber
                     )
                 }
             }

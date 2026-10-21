@@ -14,10 +14,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.florachain.designsystem.BotanicalEmerald
-import com.florachain.designsystem.DeepSlate
-import com.florachain.designsystem.SurfaceDark
-import com.florachain.designsystem.TextMuted
 import com.florachain.domain.model.UserRole
 import com.florachain.presentation.screens.auth.LoginScreen
 import com.florachain.presentation.screens.auth.RegisterScreen
@@ -185,16 +181,18 @@ fun FloraChainNavHost(
                 arguments = listOf(navArgument("batchId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val batchId = backStackEntry.arguments?.getString("batchId") ?: ""
+                val homeState by homeViewModel.uiState.collectAsState()
                 val verifyState by verifyViewModel.uiState.collectAsState()
                 val farmerState by farmerViewModel.uiState.collectAsState()
 
-                // Find batch from verifyViewModel or farmer list matching either id or batchId
-                val product = verifyState.result?.product?.takeIf {
+                // Find batch from homeViewModel, verifyViewModel, or farmer list matching either id or batchId
+                val product = homeState.products.find {
                     it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
-                } ?: verifyState.result?.product
-                  ?: farmerState.products.find {
+                } ?: verifyState.result?.product?.takeIf {
                     it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
-                }
+                } ?: farmerState.products.find {
+                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
+                } ?: homeState.featuredProduct ?: verifyState.result?.product
 
                 BatchDetailsScreen(
                     product = product,

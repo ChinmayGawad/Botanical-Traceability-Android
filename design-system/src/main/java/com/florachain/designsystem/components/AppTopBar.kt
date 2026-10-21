@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -103,7 +103,9 @@ fun AppTopBar(
                         tint = if (themeController.isDark) BotanicalEmerald else colors.primary,
                         modifier = Modifier
                             .size(20.dp)
-                            .rotate(themeIconRotation)
+                            .graphicsLayer {
+                                rotationZ = themeIconRotation
+                            }
                     )
                 }
             }

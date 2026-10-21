@@ -1,5 +1,6 @@
 package com.florachain.presentation.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.florachain.domain.model.VerificationResult
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 data class VerifyUiState(
     val isScanning: Boolean = true,
     val isLoading: Boolean = false,
