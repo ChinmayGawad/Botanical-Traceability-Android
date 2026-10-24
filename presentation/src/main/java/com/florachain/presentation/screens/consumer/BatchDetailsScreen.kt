@@ -70,6 +70,9 @@ fun BatchDetailsScreen(
         }
 
         val scrollState = rememberScrollState()
+        var viewMode by remember { mutableStateOf("MAP") }
+        var isShareSheetOpen by remember { mutableStateOf(false) }
+        var isReportDialogOpen by remember { mutableStateOf(false) }
 
         val isRejected = product.verificationState == VerificationState.REJECTED ||
                 product.verificationState == VerificationState.COMPROMISED
@@ -85,89 +88,175 @@ fun BatchDetailsScreen(
             else -> 75
         }
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(scrollState)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Main Product Identity Card with Animated TrustScoreGauge
-            CyberGlassCard(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = product.name,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Black,
-                            color = colors.textPrimary
-                        )
-                        Text(
-                            text = product.botanicalName,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.primary,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                        )
-                        Text(
-                            text = "Batch: #${product.batchId}",
-                            fontSize = 12.sp,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textSecondary,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TrustSealBadge(state = trustState, trustScore = trustScore)
-                    }
-
-                    // Animated Circular Trust Gauge
-                    TrustScoreGauge(
-                        score = trustScore,
-                        gaugeSize = 92.dp,
-                        strokeWidth = 7.dp,
-                        label = "INTEGRITY"
-                    )
-                }
-
-                HorizontalDivider(
-                    color = colors.glassBorder,
-                    modifier = Modifier.padding(vertical = 14.dp)
-                )
-
-                // Quick Specs Strip
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SpecColumn(label = "Category", value = product.category.name)
-                    SpecColumn(label = "Method", value = product.cultivationMethod.name)
-                    SpecColumn(label = "Harvest Qty", value = "${product.quantityKg.toInt()} kg")
-                    SpecColumn(label = "Network", value = "Polygon Amoy")
-                }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (product.verificationState == VerificationState.VERIFIED) {
+                ConfettiCelebration(triggerKey = product.batchId)
             }
 
-            // Supply Chain Provenance Timeline Header
-            Text(
-                text = "Cryptographic Provenance Stages",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = colors.textPrimary,
-                letterSpacing = 0.5.sp
-            )
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(scrollState)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Main Product Identity Card with Animated TrustScoreGauge
+                CyberGlassCard(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = product.name,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Black,
+                                color = colors.textPrimary
+                            )
+                            Text(
+                                text = product.botanicalName,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.primary,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                            )
+                            Text(
+                                text = "Batch: #${product.batchId}",
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textSecondary,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            TrustSealBadge(state = trustState, trustScore = trustScore)
+                        }
 
-            // Stage 1: Agricultural Harvest
-            TimelineNode(
-                icon = Icons.Default.Agriculture,
-                stageTitle = "Stage 1: Agricultural Harvest",
-                subtitle = "${product.farmerName} • ${product.farmLocation}",
-                timestamp = product.harvestDate,
-                isCompleted = true,
+                        // Animated Circular Trust Gauge
+                        TrustScoreGauge(
+                            score = trustScore,
+                            gaugeSize = 92.dp,
+                            strokeWidth = 7.dp,
+                            label = "INTEGRITY"
+                        )
+                    }
+
+                    HorizontalDivider(
+                        color = colors.glassBorder,
+                        modifier = Modifier.padding(vertical = 14.dp)
+                    )
+
+                    // Quick Specs Strip
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        SpecColumn(label = "Category", value = product.category.name)
+                        SpecColumn(label = "Method", value = product.cultivationMethod.name)
+                        SpecColumn(label = "Harvest Qty", value = "${product.quantityKg.toInt()} kg")
+                        SpecColumn(label = "Network", value = "Polygon Amoy")
+                    }
+                }
+
+                // Action Strip: Share CoA & Report Issue
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = { isShareSheetOpen = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Share CoA", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    OutlinedButton(
+                        onClick = { isReportDialogOpen = true },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444)),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.ReportProblem, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Report Issue", fontSize = 12.sp)
+                    }
+                }
+
+                // Dual View Mode Selector Tabs: Journey Map vs Stage Timeline
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (viewMode == "MAP") colors.primary else colors.surfaceElevated,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, if (viewMode == "MAP") colors.primary else colors.glassBorder),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { viewMode = "MAP" }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 10.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Map, contentDescription = null, tint = if (viewMode == "MAP") Color.White else colors.textPrimary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Interactive Map", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (viewMode == "MAP") Color.White else colors.textPrimary)
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (viewMode == "TIMELINE") colors.primary else colors.surfaceElevated,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, if (viewMode == "TIMELINE") colors.primary else colors.glassBorder),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { viewMode = "TIMELINE" }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 10.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Timeline, contentDescription = null, tint = if (viewMode == "TIMELINE") Color.White else colors.textPrimary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Stage Timeline", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (viewMode == "TIMELINE") Color.White else colors.textPrimary)
+                        }
+                    }
+                }
+
+                if (viewMode == "MAP") {
+                    // ── Interactive Geospatial Route Canvas ──
+                    JourneyMapCanvas(
+                        batchId = product.batchId,
+                        productName = product.name
+                    )
+                } else {
+                    // Supply Chain Provenance Timeline Header
+                    Text(
+                        text = "Cryptographic Provenance Stages",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = colors.textPrimary,
+                        letterSpacing = 0.5.sp
+                    )
+
+                    // Stage 1: Agricultural Harvest
+                    TimelineNode(
+                        icon = Icons.Default.Agriculture,
+                        stageTitle = "Stage 1: Agricultural Harvest",
+                        subtitle = "${product.farmerName} • ${product.farmLocation}",
+                        timestamp = product.harvestDate,
+                        isCompleted = true,
+
                 content = {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         product.gpsCoordinates?.let { gps ->
@@ -317,6 +406,7 @@ fun BatchDetailsScreen(
                     }
                 }
             )
+            }
 
             // ── Cryptographic Proof Explorer Card ──
             CyberGlassCard(
@@ -415,8 +505,28 @@ fun BatchDetailsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+
+        if (isShareSheetOpen) {
+            ShareLabReportBottomSheet(
+                product = product,
+                onDismiss = { isShareSheetOpen = false }
+            )
+        }
+
+        if (isReportDialogOpen) {
+            ReportSuspiciousDialog(
+                batchId = product.batchId,
+                onDismiss = { isReportDialogOpen = false },
+                onSubmit = { report ->
+                    Toast.makeText(context, "Fraud report submitted. Consortium alerted.", Toast.LENGTH_LONG).show()
+                    isReportDialogOpen = false
+                }
+            )
+        }
     }
 }
+}
+
 
 @Composable
 private fun SpecColumn(label: String, value: String) {
