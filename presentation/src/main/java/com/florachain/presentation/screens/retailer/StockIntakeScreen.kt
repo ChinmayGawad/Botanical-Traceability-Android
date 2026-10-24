@@ -28,6 +28,7 @@ fun StockIntakeScreen(
     retailerId: String,
     retailerName: String,
     onLogout: () -> Unit,
+    onNavigateToGenerateQr: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -47,6 +48,11 @@ fun StockIntakeScreen(
                 title = "Retail Stock Intake",
                 showThemeToggle = true,
                 actions = {
+                    if (onNavigateToGenerateQr != null) {
+                        IconButton(onClick = onNavigateToGenerateQr) {
+                            Icon(Icons.Default.QrCode, contentDescription = "QR Studio", tint = colors.primary)
+                        }
+                    }
                     IconButton(onClick = onLogout) {
                         Icon(Icons.Default.Logout, contentDescription = "Logout", tint = colors.errorRose)
                     }
@@ -55,6 +61,7 @@ fun StockIntakeScreen(
         },
         containerColor = colors.background
     ) { paddingValues ->
+
         val scrollState = rememberScrollState()
 
         Column(

@@ -41,6 +41,11 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.google.mlkit.barcode)
 
+    // QR Generation & Native Printing
+    implementation(libs.zxing.core)
+    implementation(libs.androidx.print)
+
     testImplementation(libs.junit)
+
     testImplementation(libs.mockk)
 }
