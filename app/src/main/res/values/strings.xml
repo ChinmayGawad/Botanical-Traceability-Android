@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">FloraChain</string>
+    <string name="tagline">Soil-to-Shelf Botanical Provenance</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_verify">Verify QR</string>
+    <string name="nav_portal">Portal</string>
+    <string name="nav_account">Account</string>
+    
+    <!-- Home Screen -->
+    <string name="hero_title">Decentralized Botanical Integrity</string>
+    <string name="hero_subtitle">Soil-to-Shelf Traceability Platform</string>
+    <string name="search_placeholder">Search Batch (e.g. BOT-2024-8901)</string>
+    <string name="scan_qr">Scan Packaging QR</string>
+    <string name="network_status">Polygon Amoy Testnet</string>
+    
+    <!-- Stages -->
+    <string name="stage_farm">1. Agricultural Harvest</string>
+    <string name="stage_process">2. GMP Extraction &amp; Milling</string>
+    <string name="stage_lab">3. HPLC Lab Assay &amp; Safety</string>
+    <string name="stage_transit">4. Cold-Chain IoT Logistics</string>
+    <string name="stage_retail">5. Retail Shelf Intake</string>
+    
+    <!-- Verification -->
+    <string name="status_verified">Cryptographically Verified Authentic</string>
+    <string name="status_tampered">Compromised / Tampered Seal</string>
+    <string name="trust_gauge_label">INTEGRITY</string>
+    <string name="share_coa">Share Certificate of Analysis</string>
+    <string name="report_fraud">Report Suspicious Batch</string>
+    
+    <!-- Regional Herb Names -->
+    <string name="herb_ashwagandha">Ashwagandha Root Powder</string>
+    <string name="herb_tulsi">Krishna Tulsi Leaves</string>
+    <string name="herb_turmeric">Lakadong High-Curcumin Turmeric</string>
+    <string name="herb_brahmi">Bacopa Brahmi Extract</string>
+</resources>

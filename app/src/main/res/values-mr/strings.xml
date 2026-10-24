@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">फ्लोराचेन</string>
+    <string name="tagline">शेतापासून दुकानापर्यंत वनस्पती सत्यता</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">मुख्यपृष्ठ</string>
+    <string name="nav_verify">पडताळणी करा</string>
+    <string name="nav_portal">पोर्टल</string>
+    <string name="nav_account">खाते</string>
+    
+    <!-- Home Screen -->
+    <string name="hero_title">विकेंद्रित वनस्पती सत्यता</string>
+    <string name="hero_subtitle">शेतापासून दुकानापर्यंत शोधक्षमता मंच</string>
+    <string name="search_placeholder">बॅच शोधा (उदा. BOT-2024-8901)</string>
+    <string name="scan_qr">पॅकेजिंग QR स्कॅन करा</string>
+    <string name="network_status">पॉलिगॉन अमोय टेस्टनेट</string>
+    
+    <!-- Stages -->
+    <string name="stage_farm">१. शेतातील कापणी व नोंद</string>
+    <string name="stage_process">२. जीएमपी प्रक्रिया व निष्कर्षण</string>
+    <string name="stage_lab">३. एचपीएलसी प्रयोगशाळा चाचणी</string>
+    <string name="stage_transit">४. कोल्ड-चेन वाहतूक</string>
+    <string name="stage_retail">५. किरकोळ विक्री पावती</string>
+    
+    <!-- Verification -->
+    <string name="status_verified">ब्लॉकचेनवर १००% प्रमाणित अस्सल</string>
+    <string name="status_tampered">सील तोडलेले / बनावट</string>
+    <string name="trust_gauge_label">सत्यता</string>
+    <string name="share_coa">प्रयोगशाळा अहवाल शेअर करा</string>
+    <string name="report_fraud">संशयास्पद बॅचची तक्रार करा</string>
+    
+    <!-- Regional Herb Names -->
+    <string name="herb_ashwagandha">अश्वगंधा पावडर</string>
+    <string name="herb_tulsi">कृष्ण तुळस पाने</string>
+    <string name="herb_turmeric">लकाडोंग हळद (उच्च कर्क्युमिन)</string>
+    <string name="herb_brahmi">ब्राह्मी अर्क</string>
+</resources>
