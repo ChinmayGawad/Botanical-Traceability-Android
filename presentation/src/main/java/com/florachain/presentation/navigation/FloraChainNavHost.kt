@@ -26,6 +26,11 @@ import com.florachain.presentation.screens.home.HomeScreen
 import com.florachain.presentation.screens.lab.RecordAssayScreen
 import com.florachain.presentation.screens.processor.ProcessBatchScreen
 import com.florachain.presentation.screens.retailer.StockIntakeScreen
+import com.florachain.presentation.screens.retailer.GenerateQrScreen
+import com.florachain.presentation.screens.admin.AdminDashboardScreen
+import com.florachain.presentation.screens.admin.UserApprovalsScreen
+import com.florachain.presentation.screens.admin.SuspiciousReportsScreen
+import com.florachain.presentation.screens.admin.BlockchainExplorerScreen
 import com.florachain.presentation.viewmodel.*
 
 sealed class BottomNavItem(val title: String, val route: String, val icon: ImageVector) {
@@ -45,11 +50,15 @@ fun FloraChainNavHost(
     processorViewModel: ProcessorViewModel = hiltViewModel(),
     labViewModel: LabViewModel = hiltViewModel(),
     distributorViewModel: DistributorViewModel = hiltViewModel(),
-    retailerViewModel: RetailerViewModel = hiltViewModel()
+    retailerViewModel: RetailerViewModel = hiltViewModel(),
+    adminViewModel: AdminViewModel = hiltViewModel(),
+    blockchainExplorerViewModel: BlockchainExplorerViewModel = hiltViewModel(),
+    qrStudioViewModel: QrStudioViewModel = hiltViewModel()
 ) {
     val authState by authViewModel.uiState.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
 
     val bottomNavItems = listOf(
         BottomNavItem.Home,
@@ -77,7 +86,12 @@ fun FloraChainNavHost(
                             Screen.LabDashboard.route,
                             Screen.DistributorDashboard.route,
                             Screen.RetailerDashboard.route,
-                            Screen.RegisterHarvest.route
+                            Screen.RegisterHarvest.route,
+                            Screen.AdminDashboard.route,
+                            Screen.UserApprovals.route,
+                            Screen.SuspiciousReports.route,
+                            Screen.BlockchainExplorer.route,
+                            Screen.GenerateQr.route
                         )
                         BottomNavItem.Login -> currentRoute in listOf(
                             Screen.Login.route,
@@ -93,6 +107,7 @@ fun FloraChainNavHost(
                                     Screen.Login.route
                                 } else {
                                     when (authState.currentUser?.role) {
+                                        UserRole.ADMIN -> Screen.AdminDashboard.route
                                         UserRole.FARMER -> Screen.FarmerDashboard.route
                                         UserRole.PROCESSOR -> Screen.ProcessorDashboard.route
                                         UserRole.LABORATORY -> Screen.LabDashboard.route
@@ -206,6 +221,7 @@ fun FloraChainNavHost(
                     viewModel = authViewModel,
                     onLoginSuccess = { role ->
                         val target = when (role) {
+                            UserRole.ADMIN -> Screen.AdminDashboard.route
                             UserRole.FARMER -> Screen.FarmerDashboard.route
                             UserRole.PROCESSOR -> Screen.ProcessorDashboard.route
                             UserRole.LABORATORY -> Screen.LabDashboard.route
@@ -365,6 +381,7 @@ fun FloraChainNavHost(
                         viewModel = retailerViewModel,
                         retailerId = authState.currentUser?.id ?: "RET-001",
                         retailerName = authState.currentUser?.name ?: "AyurAushadhi Pharmacy",
+                        onNavigateToGenerateQr = { navController.navigate(Screen.GenerateQr.route) },
                         onLogout = {
                             authViewModel.logout()
                             navController.navigate(Screen.Login.route) {
@@ -374,6 +391,63 @@ fun FloraChainNavHost(
                         }
                     )
                 }
+            }
+
+            // Retailer Generate QR Label Studio
+            composable(Screen.GenerateQr.route) {
+                GenerateQrScreen(
+                    viewModel = qrStudioViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Admin Dashboard Screen
+            composable(Screen.AdminDashboard.route) {
+                if (authState.currentUser == null) {
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.AdminDashboard.route) { inclusive = true }
+                        }
+                    }
+                } else {
+                    AdminDashboardScreen(
+                        viewModel = adminViewModel,
+                        onNavigateToApprovals = { navController.navigate(Screen.UserApprovals.route) },
+                        onNavigateToReports = { navController.navigate(Screen.SuspiciousReports.route) },
+                        onNavigateToExplorer = { navController.navigate(Screen.BlockchainExplorer.route) },
+                        onLogout = {
+                            authViewModel.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+            }
+
+            // User Approvals Screen
+            composable(Screen.UserApprovals.route) {
+                UserApprovalsScreen(
+                    viewModel = adminViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Suspicious Reports Desk Screen
+            composable(Screen.SuspiciousReports.route) {
+                SuspiciousReportsScreen(
+                    viewModel = adminViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Blockchain Ledger Explorer Screen
+            composable(Screen.BlockchainExplorer.route) {
+                BlockchainExplorerScreen(
+                    viewModel = blockchainExplorerViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

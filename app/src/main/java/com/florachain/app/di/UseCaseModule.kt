@@ -73,4 +73,53 @@ object UseCaseModule {
     fun provideSyncPendingActionsUseCase(syncRepository: SyncRepository): SyncPendingActionsUseCase {
         return SyncPendingActionsUseCase(syncRepository)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetPendingUsersUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): GetPendingUsersUseCase {
+        return GetPendingUsersUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApproveUserUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): ApproveUserUseCase {
+        return ApproveUserUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRejectUserUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): RejectUserUseCase {
+        return RejectUserUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSuspiciousReportsUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): GetSuspiciousReportsUseCase {
+        return GetSuspiciousReportsUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSubmitSuspiciousReportUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): SubmitSuspiciousReportUseCase {
+        return SubmitSuspiciousReportUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateReportStatusUseCase(adminRepository: com.florachain.domain.repository.AdminRepository): UpdateReportStatusUseCase {
+        return UpdateReportStatusUseCase(adminRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetBlockchainStatsUseCase(blockchainRepository: com.florachain.domain.repository.BlockchainRepository): GetBlockchainStatsUseCase {
+        return GetBlockchainStatsUseCase(blockchainRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetBlockchainTransactionsUseCase(blockchainRepository: com.florachain.domain.repository.BlockchainRepository): GetBlockchainTransactionsUseCase {
+        return GetBlockchainTransactionsUseCase(blockchainRepository)
+    }
 }
+

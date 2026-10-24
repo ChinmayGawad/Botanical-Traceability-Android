@@ -276,3 +276,56 @@ data class VerificationResultResponse(
     @SerializedName("stageIntegrity") val stageIntegrity: List<StageIntegrityDto>?,
     @SerializedName("verificationSummary") val verificationSummary: String
 )
+
+// --- Report DTOs ---
+data class CreateReportRequestDto(
+    @SerializedName("batchId") val batchId: String,
+    @SerializedName("reporterName") val reporterName: String,
+    @SerializedName("reporterContact") val reporterContact: String?,
+    @SerializedName("issueType") val issueType: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("evidencePhotoUrl") val evidencePhotoUrl: String?
+)
+
+data class ReportResponseDto(
+    @SerializedName("id") val id: String,
+    @SerializedName("batchId") val batchId: String,
+    @SerializedName("reporterName") val reporterName: String,
+    @SerializedName("reporterContact") val reporterContact: String?,
+    @SerializedName("issueType") val issueType: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("evidencePhotoUrl") val evidencePhotoUrl: String?,
+    @SerializedName("status") val status: String,
+    @SerializedName("adminNotes") val adminNotes: String?,
+    @SerializedName("createdAt") val createdAt: String
+)
+
+data class UpdateReportStatusRequestDto(
+    @SerializedName("status") val status: String,
+    @SerializedName("adminNotes") val adminNotes: String?
+)
+
+// --- Blockchain DTOs ---
+data class BlockchainStatsResponseDto(
+    @SerializedName("blockHeight") val blockHeight: Long,
+    @SerializedName("totalTransactions") val totalTransactions: Long,
+    @SerializedName("activeNodes") val activeNodes: Int,
+    @SerializedName("gasUsed") val gasUsed: Long,
+    @SerializedName("contractAddress") val contractAddress: String,
+    @SerializedName("networkName") val networkName: String?
+)
+
+data class TransactionDto(
+    @SerializedName("txId") val txId: String,
+    @SerializedName("blockNumber") val blockNumber: Long,
+    @SerializedName("from") val from: String,
+    @SerializedName("to") val to: String,
+    @SerializedName("stage") val stage: String,
+    @SerializedName("action") val action: String,
+    @SerializedName("actor") val actor: String,
+    @SerializedName("timestamp") val timestamp: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("gasUsed") val gasUsed: Long,
+    @SerializedName("rawPayload") val rawPayload: String?
+)
+

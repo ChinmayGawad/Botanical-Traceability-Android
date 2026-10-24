@@ -48,4 +48,21 @@ object RepositoryModule {
     ): SyncRepository {
         return SyncRepositoryImpl(syncQueueDao, productDao, api)
     }
+
+    @Provides
+    @Singleton
+    fun provideAdminRepository(
+        api: FloraChainApi
+    ): com.florachain.domain.repository.AdminRepository {
+        return com.florachain.data.repository.AdminRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBlockchainRepository(
+        api: FloraChainApi
+    ): com.florachain.domain.repository.BlockchainRepository {
+        return com.florachain.data.repository.BlockchainRepositoryImpl(api)
+    }
 }
+

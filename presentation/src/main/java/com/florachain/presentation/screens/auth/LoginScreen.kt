@@ -171,7 +171,8 @@ fun LoginScreen(
                         UserRole.PROCESSOR,
                         UserRole.LABORATORY,
                         UserRole.DISTRIBUTOR,
-                        UserRole.RETAILER
+                        UserRole.RETAILER,
+                        UserRole.ADMIN
                     )
                     items(roles) { role ->
                         FilterChip(
@@ -248,7 +249,8 @@ fun LoginScreen(
                         Triple(UserRole.PROCESSOR, "processor@ayush.gov.in", "Processor@123"),
                         Triple(UserRole.LABORATORY, "lab@ayush.gov.in", "Lab@123"),
                         Triple(UserRole.DISTRIBUTOR, "distributor@ayush.gov.in", "Distributor@123"),
-                        Triple(UserRole.RETAILER, "retailer@ayush.gov.in", "Retailer@123")
+                        Triple(UserRole.RETAILER, "retailer@ayush.gov.in", "Retailer@123"),
+                        Triple(UserRole.ADMIN, "admin@florachain.com", "Admin@123")
                     )
 
                     items(demoRoles) { (role, roleEmail, rolePass) ->

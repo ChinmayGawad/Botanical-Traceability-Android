@@ -74,4 +74,38 @@ interface FloraChainApi {
     // --- Web Project Live Sync Feed ---
     @GET
     suspend fun getSyncProducts(@Url url: String): Response<List<ProductResponse>>
+
+    // --- Admin & Stakeholder Governance ---
+    @GET("auth/users/pending")
+    suspend fun getPendingUsers(): Response<List<UserDto>>
+
+    @PUT("auth/users/{id}/approve")
+    suspend fun approveUser(@Path("id") id: String): Response<UserDto>
+
+    @PUT("auth/users/{id}/reject")
+    suspend fun rejectUser(@Path("id") id: String): Response<Unit>
+
+    // --- Suspicious Reports & Fraud Resolution ---
+    @POST("reports")
+    suspend fun submitReport(@Body request: CreateReportRequestDto): Response<ReportResponseDto>
+
+    @GET("reports")
+    suspend fun getReports(@Query("status") status: String? = null): Response<List<ReportResponseDto>>
+
+    @PUT("reports/{id}/status")
+    suspend fun updateReportStatus(
+        @Path("id") id: String,
+        @Body request: UpdateReportStatusRequestDto
+    ): Response<ReportResponseDto>
+
+    // --- Blockchain Ledger Explorer ---
+    @GET("blockchain/stats")
+    suspend fun getNetworkStats(): Response<BlockchainStatsResponseDto>
+
+    @GET("blockchain/transactions")
+    suspend fun getAllTransactions(): Response<List<TransactionDto>>
+
+    @GET("blockchain/transactions/product/{productId}")
+    suspend fun getTransactionsByProduct(@Path("productId") productId: String): Response<List<TransactionDto>>
 }
+
