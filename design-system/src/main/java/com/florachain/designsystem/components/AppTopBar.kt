@@ -10,10 +10,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.florachain.designsystem.BotanicalEmerald
 import com.florachain.designsystem.FloraChainTheme
 import com.florachain.designsystem.LocalThemeController
+import com.florachain.designsystem.LocalLanguageController
 
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
@@ -39,10 +41,13 @@ fun AppTopBar(
     onNavigateBack: () -> Unit = {},
     showNetworkPill: Boolean = false,
     showThemeToggle: Boolean = true,
+    showLanguageSelector: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     val colors = FloraChainTheme.colors
     val themeController = LocalThemeController.current
+    val languageController = LocalLanguageController.current
+    var isLanguageMenuOpen by remember { mutableStateOf(false) }
 
     val themeIconRotation by animateFloatAsState(
         targetValue = if (themeController.isDark) 0f else 180f,
@@ -126,6 +131,64 @@ fun AppTopBar(
                                 rotationZ = themeIconRotation
                             }
                     )
+                }
+            }
+
+            // In-App Multi-Language Switcher (English, हिन्दी, मराठी)
+            if (showLanguageSelector) {
+                Box {
+                    IconButton(onClick = { isLanguageMenuOpen = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Language,
+                            contentDescription = "Switch Language",
+                            tint = colors.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = isLanguageMenuOpen,
+                        onDismissRequest = { isLanguageMenuOpen = false }
+                    ) {
+                        val languages = listOf(
+                            Triple("en", "English", "🇬🇧"),
+                            Triple("hi", "हिन्दी (Hindi)", "🇮🇳"),
+                            Triple("mr", "मराठी (Marathi)", "🇮🇳")
+                        )
+                        languages.forEach { (code, name, flag) ->
+                            val isSelected = languageController.currentLanguage == code
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Text(flag, fontSize = 14.sp)
+                                        Text(
+                                            text = name,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (isSelected) colors.primary else colors.textPrimary,
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                },
+                                trailingIcon = {
+                                    if (isSelected) {
+                                        Icon(
+                                            Icons.Default.Check,
+                                            contentDescription = "Selected",
+                                            tint = colors.primary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    languageController.setLanguage(code)
+                                    isLanguageMenuOpen = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
 

@@ -21,10 +21,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             var isDarkTheme by rememberSaveable { mutableStateOf(true) }
+            var currentLanguage by rememberSaveable { mutableStateOf("en") }
 
             FloraChainTheme(
                 darkTheme = isDarkTheme,
-                onToggleTheme = { isDarkTheme = !isDarkTheme }
+                languageCode = currentLanguage,
+                onToggleTheme = { isDarkTheme = !isDarkTheme },
+                onLanguageChange = { lang ->
+                    currentLanguage = lang
+                    applyAppLocale(lang)
+                }
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -33,6 +39,19 @@ class MainActivity : ComponentActivity() {
                     FloraChainNavHost()
                 }
             }
+        }
+    }
+
+    private fun applyAppLocale(langTag: String) {
+        val locale = java.util.Locale(langTag)
+        java.util.Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        @Suppress("DEPRECATION")
+        resources.updateConfiguration(config, resources.displayMetrics)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            getSystemService(android.app.LocaleManager::class.java)?.applicationLocales =
+                android.os.LocaleList.forLanguageTags(langTag)
         }
     }
 }

@@ -102,6 +102,15 @@ val LocalThemeController = compositionLocalOf {
     ThemeController(isDark = true, toggleTheme = {})
 }
 
+data class LanguageController(
+    val currentLanguage: String,
+    val setLanguage: (String) -> Unit
+)
+
+val LocalLanguageController = compositionLocalOf {
+    LanguageController(currentLanguage = "en", setLanguage = {})
+}
+
 private val DarkColorScheme = darkColorScheme(
     primary = BotanicalEmerald,
     onPrimary = DarkBackground,
@@ -151,9 +160,12 @@ object FloraChainTheme {
 @Composable
 fun FloraChainTheme(
     darkTheme: Boolean = true,
+    languageCode: String = "en",
     onToggleTheme: (() -> Unit)? = null,
+    onLanguageChange: ((String) -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
+    var currentLang by remember(languageCode) { mutableStateOf(languageCode) }
     val floraColors = if (darkTheme) DarkFloraChainColors else LightFloraChainColors
     val materialScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val themeController = remember(darkTheme, onToggleTheme) {
@@ -162,10 +174,20 @@ fun FloraChainTheme(
             toggleTheme = onToggleTheme ?: {}
         )
     }
+    val langController = remember(currentLang, onLanguageChange) {
+        LanguageController(
+            currentLanguage = currentLang,
+            setLanguage = { newLang ->
+                currentLang = newLang
+                onLanguageChange?.invoke(newLang)
+            }
+        )
+    }
 
     CompositionLocalProvider(
         LocalFloraChainColors provides floraColors,
-        LocalThemeController provides themeController
+        LocalThemeController provides themeController,
+        LocalLanguageController provides langController
     ) {
         MaterialTheme(
             colorScheme = materialScheme,
