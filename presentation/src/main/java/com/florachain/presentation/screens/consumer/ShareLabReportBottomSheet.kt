@@ -96,7 +96,27 @@ fun ShareLabReportBottomSheet(
                 }
             }
 
-            // Share Actions
+            // Export Official PDF Certificate Action
+            Button(
+                onClick = {
+                    try {
+                        com.florachain.core.pdf.BotanicalPdfGenerator.generateAndSharePdf(context, product)
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Error creating PDF: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Export & Share Official PDF CoA", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            }
+
+            // Secondary Quick Actions
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -114,17 +134,16 @@ fun ShareLabReportBottomSheet(
                     Text("Copy Link", fontSize = 12.sp)
                 }
 
-                Button(
+                OutlinedButton(
                     onClick = {
                         shareNativeProof(context, product, verificationUrl)
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Share CoA", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Share Text", fontSize = 12.sp)
                 }
             }
         }
