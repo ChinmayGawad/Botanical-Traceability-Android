@@ -31,6 +31,7 @@ import com.florachain.presentation.screens.admin.AdminDashboardScreen
 import com.florachain.presentation.screens.admin.UserApprovalsScreen
 import com.florachain.presentation.screens.admin.SuspiciousReportsScreen
 import com.florachain.presentation.screens.admin.BlockchainExplorerScreen
+import com.florachain.presentation.screens.fleet.FleetCommandScreen
 import com.florachain.presentation.viewmodel.*
 
 sealed class BottomNavItem(val title: String, val route: String, val icon: ImageVector) {
@@ -53,7 +54,8 @@ fun FloraChainNavHost(
     retailerViewModel: RetailerViewModel = hiltViewModel(),
     adminViewModel: AdminViewModel = hiltViewModel(),
     blockchainExplorerViewModel: BlockchainExplorerViewModel = hiltViewModel(),
-    qrStudioViewModel: QrStudioViewModel = hiltViewModel()
+    qrStudioViewModel: QrStudioViewModel = hiltViewModel(),
+    fleetCommandViewModel: FleetCommandViewModel = hiltViewModel()
 ) {
     val authState by authViewModel.uiState.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -176,6 +178,9 @@ fun FloraChainNavHost(
                             launchSingleTop = true
                             restoreState = true
                         }
+                    },
+                    onNavigateToFleetCommand = {
+                        navController.navigate(Screen.FleetMap.route)
                     }
                 )
             }
@@ -211,7 +216,8 @@ fun FloraChainNavHost(
 
                 BatchDetailsScreen(
                     product = product,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    verifyViewModel = verifyViewModel
                 )
             }
 
@@ -446,6 +452,14 @@ fun FloraChainNavHost(
             composable(Screen.BlockchainExplorer.route) {
                 BlockchainExplorerScreen(
                     viewModel = blockchainExplorerViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Dedicated Fleet Command Center Deck
+            composable(Screen.FleetMap.route) {
+                FleetCommandScreen(
+                    viewModel = fleetCommandViewModel,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

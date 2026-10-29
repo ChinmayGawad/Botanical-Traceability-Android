@@ -41,6 +41,7 @@ fun HomeScreen(
     onNavigateToDetails: (String) -> Unit,
     onNavigateToScan: () -> Unit,
     onNavigateToPortal: () -> Unit,
+    onNavigateToFleetCommand: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -255,6 +256,77 @@ fun HomeScreen(
 
             // ── Live 5-Node Blockchain Consensus Strip ──
             ConsensusNodeStrip()
+
+            // ── Live Fleet Logistics Command Deck Banner ──
+            CyberGlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onNavigateToFleetCommand()
+                }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Surface(
+                            color = TrustGreen.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(TrustGreen)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "LIVE IOT COLD-CHAIN",
+                                    color = TrustGreen,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Fleet Command Deck",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = "Real-time vector maps, interactive time scrubber & live reefer telemetry.",
+                            fontSize = 12.sp,
+                            color = colors.textSecondary
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    IconButton(
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onNavigateToFleetCommand()
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = colors.primary,
+                            contentColor = colors.onPrimary
+                        ),
+                        modifier = Modifier.size(42.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Route,
+                            contentDescription = "Fleet Map",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
 
             // ── Live Provenance Featured Card ──
             val featured = uiState.featuredProduct

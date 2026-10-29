@@ -19,5 +19,6 @@ sealed class Screen(val route: String) {
     data object SuspiciousReports : Screen("suspicious_reports")
     data object BlockchainExplorer : Screen("blockchain_explorer")
     data object GenerateQr : Screen("generate_qr")
+    data object FleetMap : Screen("fleet_map")
 }
 
