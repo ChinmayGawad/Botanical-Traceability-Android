@@ -38,6 +38,8 @@ fun RecordAssayScreen(
     var heavyMetals by remember { mutableStateOf(TestStatus.PASSED) }
     var microbial by remember { mutableStateOf(TestStatus.PASSED) }
     var pesticide by remember { mutableStateOf(TestStatus.PASSED) }
+    var testedBy by remember { mutableStateOf("Dr. Ananya Sharma, Lead Phytochemist") }
+    var certificateIpfsCid by remember { mutableStateOf("QmTestCoA" + java.util.UUID.randomUUID().toString().take(8)) }
     var isApproved by remember { mutableStateOf(true) }
     var notes by remember { mutableStateOf("Meets AYUSH Pharmacopoeia quality thresholds") }
 
@@ -157,6 +159,36 @@ fun RecordAssayScreen(
                 StatusRow(label = "Microbial Bioburden", status = microbial) { microbial = it }
                 Spacer(modifier = Modifier.height(8.dp))
                 StatusRow(label = "Pesticide Residue Screen", status = pesticide) { pesticide = it }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                OutlinedTextField(
+                    value = testedBy,
+                    onValueChange = { testedBy = it },
+                    label = { Text("Lead Analytical Chemist") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = certificateIpfsCid,
+                    onValueChange = { certificateIpfsCid = it },
+                    label = { Text("IPFS CoA / Spectrogram CID") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Pharmacopoeia Compliance Notes") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             // Overall Approval Switch
@@ -204,14 +236,15 @@ fun RecordAssayScreen(
                     viewModel.submitAssay(
                         labId = labId.ifBlank { "LAB-AYUSH-01" },
                         labName = labName.ifBlank { "National Botanical Analytical Lab" },
-                        testedBy = "Dr. Ananya Sharma",
+                        testedBy = testedBy,
                         purity = purity,
                         moisture = moisture,
                         heavyMetals = heavyMetals,
                         microbial = microbial,
                         pesticide = pesticide,
                         isApproved = isApproved,
-                        notes = notes
+                        notes = notes,
+                        certificateIpfsCid = certificateIpfsCid.ifBlank { null }
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,

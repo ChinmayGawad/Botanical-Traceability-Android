@@ -63,7 +63,8 @@ class DistributorViewModel @Inject constructor(
         destinationLocation: String,
         vehicleNumber: String,
         transportType: TransportType,
-        temperatureRange: String
+        temperatureRange: String,
+        trackingNumber: String? = null
     ) {
         val product = _uiState.value.selectedProduct ?: return
         viewModelScope.launch {
@@ -73,6 +74,9 @@ class DistributorViewModel @Inject constructor(
             val dispatchDate = sdf.format(Date())
             val calendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 3) }
             val expectedDate = sdf.format(calendar.time)
+
+            val resolvedTracking = trackingNumber?.ifBlank { null }
+                ?: ("TRK-" + UUID.randomUUID().toString().take(8).uppercase())
 
             val shipment = ShipmentRecord(
                 shipmentId = "SHIP-" + UUID.randomUUID().toString().take(6).uppercase(),
@@ -87,7 +91,7 @@ class DistributorViewModel @Inject constructor(
                 expectedDeliveryDate = expectedDate,
                 actualDeliveryDate = null,
                 status = "IN_TRANSIT",
-                trackingNumber = "TRK-" + UUID.randomUUID().toString().take(8).uppercase(),
+                trackingNumber = resolvedTracking,
                 txHash = null
             )
 

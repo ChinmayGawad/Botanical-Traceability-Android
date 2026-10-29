@@ -60,7 +60,9 @@ class ProcessorViewModel @Inject constructor(
         facilityLocation: String,
         initialQty: Double,
         processedQty: Double,
-        notes: String?
+        equipmentUsed: List<String> = listOf("Supercritical CO2 Extractor", "Rotary Evaporator"),
+        ipfsDocumentCid: String? = null,
+        notes: String? = null
     ) {
         val product = _uiState.value.selectedProduct ?: return
         viewModelScope.launch {
@@ -78,8 +80,8 @@ class ProcessorViewModel @Inject constructor(
                 initialQuantityKg = initialQty,
                 processedQuantityKg = processedQty,
                 yieldLossPercentage = yieldLoss,
-                equipmentUsed = listOf("Supercritical CO2 Extractor", "Rotary Evaporator"),
-                ipfsDocumentCid = null,
+                equipmentUsed = equipmentUsed,
+                ipfsDocumentCid = ipfsDocumentCid,
                 notes = notes,
                 txHash = null
             )

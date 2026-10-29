@@ -62,13 +62,15 @@ class LabViewModel @Inject constructor(
         microbial: TestStatus,
         pesticide: TestStatus,
         isApproved: Boolean,
-        notes: String?
+        notes: String?,
+        certificateIpfsCid: String? = null
     ) {
         val product = _uiState.value.selectedProduct ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, isSuccess = false) }
 
             val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            val resolvedCid = certificateIpfsCid?.ifBlank { null } ?: ("QmTestCoA" + UUID.randomUUID().toString().take(8))
 
             val report = LabReport(
                 labId = labId,
@@ -84,8 +86,8 @@ class LabViewModel @Inject constructor(
                     LabTestParameter("HPLC Purity Assay", "$purity%", "%", ">= 95.0%", purity >= 95.0),
                     LabTestParameter("Loss on Drying (Moisture)", "$moisture%", "%", "<= 8.0%", moisture <= 8.0)
                 ),
-                certificateIpfsCid = "QmTestCoA" + UUID.randomUUID().toString().take(8),
-                certificateUrl = "https://gateway.pinata.cloud/ipfs/QmTestCoA",
+                certificateIpfsCid = resolvedCid,
+                certificateUrl = "https://gateway.pinata.cloud/ipfs/$resolvedCid",
                 overallResult = if (isApproved) "APPROVED" else "REJECTED",
                 notes = notes,
                 txHash = null

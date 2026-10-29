@@ -90,7 +90,10 @@ class FarmerViewModel @Inject constructor(
         farmLocation: String,
         farmerId: String,
         farmerName: String,
-        farmerOrg: String?
+        farmerOrg: String?,
+        description: String? = null,
+        activeCompounds: List<String> = emptyList(),
+        certificates: List<Certificate> = emptyList()
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, registrationSuccess = false) }
@@ -115,9 +118,11 @@ class FarmerViewModel @Inject constructor(
                 status = ProductStatus.HARVESTED,
                 verificationState = VerificationState.PENDING,
                 qrCodeValue = "florachain:batch:$batchId",
-                description = "Cultivated via ${method.name} at $farmLocation",
+                description = description ?: "Cultivated via ${method.name} at $farmLocation",
                 imageUrl = null,
-                createdTimestamp = System.currentTimeMillis().toString()
+                createdTimestamp = System.currentTimeMillis().toString(),
+                activeCompounds = activeCompounds,
+                certificates = certificates
             )
 
             val result = registerHarvestUseCase(newProduct)

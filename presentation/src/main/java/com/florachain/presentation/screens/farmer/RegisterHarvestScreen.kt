@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.florachain.designsystem.*
 import com.florachain.designsystem.components.AppTopBar
 import com.florachain.designsystem.components.GlassmorphicCard
+import com.florachain.domain.model.Certificate
 import com.florachain.domain.model.CultivationMethod
 import com.florachain.domain.model.ProductCategory
 import com.florachain.presentation.viewmodel.FarmerViewModel
@@ -44,6 +45,10 @@ fun RegisterHarvestScreen(
     var method by remember { mutableStateOf(CultivationMethod.ORGANIC) }
     var quantityKgText by remember { mutableStateOf("250.0") }
     var farmLocation by remember { mutableStateOf("Neemuch, Madhya Pradesh, India") }
+    var description by remember { mutableStateOf("Premium sun-dried winter cherry roots, hand-harvested at peak bioactive potency.") }
+    var activeCompoundsText by remember { mutableStateOf("Withanolides 5.2%, Withaferin A 1.8%, Alkaloids") }
+    var certificateName by remember { mutableStateOf("NPOP India Organic") }
+    var certificateBody by remember { mutableStateOf("OneCert International") }
 
     var categoryExpanded by remember { mutableStateOf(false) }
     var methodExpanded by remember { mutableStateOf(false) }
@@ -241,6 +246,65 @@ fun RegisterHarvestScreen(
                 }
             }
 
+            // Phytochemical & Active Profile Card
+            GlassmorphicCard(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Phytochemical & Bioactive Potency",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = colors.textPrimary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Botanical Description / Aroma") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = activeCompoundsText,
+                    onValueChange = { activeCompoundsText = it },
+                    label = { Text("Key Active Biomarkers (comma separated)") },
+                    supportingText = { Text("e.g. Withanolides, Curcumin, Polyphenols", fontSize = 11.sp, color = colors.textMuted) },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            // Organic & Quality Certifications Card
+            GlassmorphicCard(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Organic Certification & Standards",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = colors.textPrimary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                OutlinedTextField(
+                    value = certificateName,
+                    onValueChange = { certificateName = it },
+                    label = { Text("Certification Standard") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = certificateBody,
+                    onValueChange = { certificateBody = it },
+                    label = { Text("Accredited Certification Body") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
             // Offline Resilience Note
             Row(
                 modifier = Modifier
@@ -270,6 +334,26 @@ fun RegisterHarvestScreen(
             Button(
                 onClick = {
                     val qty = quantityKgText.toDoubleOrNull() ?: 1.0
+                    val compounds = activeCompoundsText
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+
+                    val certList = if (certificateName.isNotBlank()) {
+                        listOf(
+                            Certificate(
+                                id = "CERT-${batchId.takeLast(6)}",
+                                type = "ORGANIC",
+                                certificateNumber = certificateName,
+                                issuingAuthority = certificateBody.ifBlank { "OneCert International Bureau" },
+                                issueDate = "2024-01-15",
+                                expiryDate = "2027-01-15",
+                                ipfsCid = "QmCert" + batchId.takeLast(6),
+                                status = "VALID"
+                            )
+                        )
+                    } else emptyList()
+
                     viewModel.registerHarvest(
                         name = name,
                         botanicalName = botanicalName,
@@ -280,7 +364,10 @@ fun RegisterHarvestScreen(
                         farmLocation = farmLocation,
                         farmerId = farmerId.ifBlank { "FARMER-001" },
                         farmerName = farmerName.ifBlank { "Ramesh Patel" },
-                        farmerOrg = "Vedic Herbs Cooperative"
+                        farmerOrg = "Vedic Herbs Cooperative",
+                        description = description,
+                        activeCompounds = compounds,
+                        certificates = certList
                     )
                 },
                 enabled = !uiState.isLoading,

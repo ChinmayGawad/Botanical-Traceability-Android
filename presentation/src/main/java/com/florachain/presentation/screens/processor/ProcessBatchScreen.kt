@@ -40,7 +40,9 @@ fun ProcessBatchScreen(
     var facilityLocation by remember { mutableStateOf("FloraChain Processing Plant A, Indore") }
     var initialQtyText by remember { mutableStateOf("250.0") }
     var processedQtyText by remember { mutableStateOf("25.0") }
-    var notes by remember { mutableStateOf("Extracted with standard GMP protocol") }
+    var equipmentText by remember { mutableStateOf("Supercritical CO2 Extractor, Rotary Evaporator, Centrifugal Clarifier") }
+    var ipfsDocumentCid by remember { mutableStateOf("bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi") }
+    var notes by remember { mutableStateOf("Extracted under validated GMP protocol with 99.8% active retention.") }
 
     val initialQty = initialQtyText.toDoubleOrNull() ?: 0.0
     val processedQty = processedQtyText.toDoubleOrNull() ?: 0.0
@@ -179,6 +181,36 @@ fun ProcessBatchScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = equipmentText,
+                    onValueChange = { equipmentText = it },
+                    label = { Text("Industrial Equipment Utilized (comma separated)") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = ipfsDocumentCid,
+                    onValueChange = { ipfsDocumentCid = it },
+                    label = { Text("IPFS SOP Batch Audit CID") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Batch Processing Quality Notes") },
+                    colors = floraChainTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Calculated Yield Loss
@@ -216,6 +248,11 @@ fun ProcessBatchScreen(
             // Submit Button
             Button(
                 onClick = {
+                    val equipmentList = equipmentText
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+
                     viewModel.submitProcessing(
                         processorId = processorId.ifBlank { "PROC-001" },
                         processorName = processorName.ifBlank { "BioExtracts Ltd" },
@@ -223,7 +260,9 @@ fun ProcessBatchScreen(
                         facilityLocation = facilityLocation,
                         initialQty = initialQty,
                         processedQty = processedQty,
-                        notes = notes
+                        equipmentUsed = equipmentList,
+                        ipfsDocumentCid = ipfsDocumentCid.ifBlank { null },
+                        notes = notes.ifBlank { null }
                     )
                 },
                 enabled = uiState.selectedProduct != null && !uiState.isLoading,
