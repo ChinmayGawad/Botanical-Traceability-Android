@@ -118,7 +118,7 @@ fun ConsensusNodeStrip(
                 border = BorderStroke(1.dp, colors.primary.copy(alpha = 0.4f))
             ) {
                 Text(
-                    text = "100% IN SYNC",
+                    text = "ACTIVE PEERS",
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Bold,
                     color = colors.primary,

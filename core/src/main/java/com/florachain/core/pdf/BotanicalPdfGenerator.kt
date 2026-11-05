@@ -187,69 +187,113 @@ object BotanicalPdfGenerator {
 
         y += 26f
         val lab = product.labReport
-        val purityVal = lab?.purityPercentage ?: 98.4
-        val moistureVal = lab?.moisturePercentage ?: 5.2
 
-        val testRows = listOf(
-            Triple("Active Phytochemical Purity (HPLC)", "$purityVal% Active Assay", "≥ 95.0% Standard"),
-            Triple("Moisture Content (Karl Fischer)", "$moistureVal% w/w", "≤ 8.0% Max Limit"),
-            Triple("Heavy Metals (Pb, Cd, As, Hg ICP-MS)", lab?.heavyMetalsStatus?.name ?: "PASSED", "USP <2232> / FSSAI"),
-            Triple("Microbial Bioburden (Aerobic Colony)", lab?.microbialTestStatus?.name ?: "PASSED", "< 10^4 CFU/g Limit"),
-            Triple("Pesticide Residue Screen (GC-MS/MS)", lab?.pesticideResidueStatus?.name ?: "PASSED", "Zero Synthetic Residue")
-        )
+        if (lab != null) {
+            val purityVal = lab.purityPercentage
+            val moistureVal = lab.moisturePercentage
+            val isApproved = lab.overallResult.equals("APPROVED", ignoreCase = true)
 
-        testRows.forEachIndexed { index, (param, value, limit) ->
-            val rowY = y + (index * 22f)
-            if (index % 2 == 1) {
-                val rowBgPaint = Paint().apply { color = Color.rgb(248, 250, 252); style = Paint.Style.FILL }
-                canvas.drawRect(36f, rowY, PAGE_WIDTH - 36f, rowY + 20f, rowBgPaint)
+            val testRows = listOf(
+                Triple("Active Phytochemical Purity (HPLC)", "$purityVal% Active Assay", "≥ 95.0% Standard"),
+                Triple("Moisture Content (Karl Fischer)", "$moistureVal% w/w", "≤ 8.0% Max Limit"),
+                Triple("Heavy Metals (Pb, Cd, As, Hg ICP-MS)", lab.heavyMetalsStatus.name, "USP <2232> / FSSAI"),
+                Triple("Microbial Bioburden (Aerobic Colony)", lab.microbialTestStatus.name, "< 10^4 CFU/g Limit"),
+                Triple("Pesticide Residue Screen (GC-MS/MS)", lab.pesticideResidueStatus.name, "Zero Synthetic Residue")
+            )
+
+            testRows.forEachIndexed { index, (param, value, limit) ->
+                val rowY = y + (index * 22f)
+                if (index % 2 == 1) {
+                    val rowBgPaint = Paint().apply { color = Color.rgb(248, 250, 252); style = Paint.Style.FILL }
+                    canvas.drawRect(36f, rowY, PAGE_WIDTH - 36f, rowY + 20f, rowBgPaint)
+                }
+                canvas.drawText(param, col1 + 8f, rowY + 14f, bodyRegularPaint)
+                canvas.drawText(value, col2, rowY + 14f, bodyBoldPaint)
+                canvas.drawText(limit, col3, rowY + 14f, subHeaderPaint)
+
+                val passPaint = Paint().apply {
+                    color = if (isApproved) Color.rgb(16, 185, 129) else Color.rgb(244, 63, 94)
+                    textSize = 9f
+                    isFakeBoldText = true
+                    isAntiAlias = true
+                }
+                canvas.drawText(if (isApproved) "✓ PASS" else "✗ FAIL", col4, rowY + 14f, passPaint)
+                canvas.drawLine(36f, rowY + 20f, PAGE_WIDTH - 36f, rowY + 20f, dividerPaint)
             }
-            canvas.drawText(param, col1 + 8f, rowY + 14f, bodyRegularPaint)
-            canvas.drawText(value, col2, rowY + 14f, bodyBoldPaint)
-            canvas.drawText(limit, col3, rowY + 14f, subHeaderPaint)
 
-            val passPaint = Paint().apply {
-                color = Color.rgb(16, 185, 129)
-                textSize = 9f
+            y += (testRows.size * 22f) + 16f
+
+            // Overall Quality Assurance Verdict Banner
+            val verdictBoxPaint = Paint().apply {
+                color = if (isApproved) Color.rgb(236, 253, 245) else Color.rgb(255, 241, 242)
+                style = Paint.Style.FILL
+            }
+            canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 42f), 8f, 8f, verdictBoxPaint)
+
+            val verdictBorderPaint = Paint().apply {
+                color = if (isApproved) Color.rgb(16, 185, 129) else Color.rgb(244, 63, 94)
+                style = Paint.Style.STROKE
+                strokeWidth = 1.5f
+                isAntiAlias = true
+            }
+            canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 42f), 8f, 8f, verdictBorderPaint)
+
+            val verdictTitlePaint = Paint().apply {
+                color = if (isApproved) Color.rgb(6, 78, 59) else Color.rgb(159, 18, 57)
+                textSize = 10f
                 isFakeBoldText = true
                 isAntiAlias = true
             }
-            canvas.drawText("✓ PASS", col4, rowY + 14f, passPaint)
-            canvas.drawLine(36f, rowY + 20f, PAGE_WIDTH - 36f, rowY + 20f, dividerPaint)
-        }
+            val verdictText = if (isApproved) {
+                "QUALITY ASSURANCE AUDIT VERDICT: APPROVED (PHARMACOPOEIA COMPLIANT)"
+            } else {
+                "QUALITY ASSURANCE AUDIT VERDICT: REJECTED (SAFETY THRESHOLD VIOLATION)"
+            }
+            canvas.drawText(verdictText, 48f, y + 18f, verdictTitlePaint)
 
-        y += (testRows.size * 22f) + 16f
+            val verdictSubPaint = Paint().apply {
+                color = if (isApproved) Color.rgb(4, 120, 87) else Color.rgb(225, 29, 72)
+                textSize = 8.5f
+                isAntiAlias = true
+            }
+            val testedByStr = lab.testedBy?.ifBlank { "Certified Analytical Chemist" } ?: "Certified Analytical Chemist"
+            val labNameStr = lab.labName.ifBlank { "Accredited Testing Facility" }
+            canvas.drawText("Certified by: $testedByStr • $labNameStr (Date: ${lab.testDate})", 48f, y + 32f, verdictSubPaint)
+        } else {
+            // Honest Notice: Laboratory Assay Pending
+            val pendingBoxPaint = Paint().apply {
+                color = Color.rgb(254, 249, 195) // Amber tint
+                style = Paint.Style.FILL
+            }
+            canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 54f), 8f, 8f, pendingBoxPaint)
 
-        // Overall Quality Assurance Verdict Banner
-        val verdictBoxPaint = Paint().apply {
-            color = Color.rgb(236, 253, 245) // Light Emerald Tint
-            style = Paint.Style.FILL
-        }
-        canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 42f), 8f, 8f, verdictBoxPaint)
+            val pendingBorderPaint = Paint().apply {
+                color = Color.rgb(217, 119, 6)
+                style = Paint.Style.STROKE
+                strokeWidth = 1.5f
+                pathEffect = DashPathEffect(floatArrayOf(6f, 4f), 0f)
+                isAntiAlias = true
+            }
+            canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 54f), 8f, 8f, pendingBorderPaint)
 
-        val verdictBorderPaint = Paint().apply {
-            color = Color.rgb(16, 185, 129)
-            style = Paint.Style.STROKE
-            strokeWidth = 1.5f
-            isAntiAlias = true
-        }
-        canvas.drawRoundRect(RectF(36f, y, PAGE_WIDTH - 36f, y + 42f), 8f, 8f, verdictBorderPaint)
+            val pendingTitlePaint = Paint().apply {
+                color = Color.rgb(180, 83, 9)
+                textSize = 10.5f
+                isFakeBoldText = true
+                isAntiAlias = true
+            }
+            canvas.drawText("ANALYTICAL ASSAY STATUS: AWAITING LABORATORY TESTING", 48f, y + 20f, pendingTitlePaint)
 
-        val verdictTitlePaint = Paint().apply {
-            color = Color.rgb(6, 78, 59)
-            textSize = 10f
-            isFakeBoldText = true
-            isAntiAlias = true
-        }
-        canvas.drawText("QUALITY ASSURANCE AUDIT VERDICT: APPROVED (PHARMACOPOEIA COMPLIANT)", 48f, y + 18f, verdictTitlePaint)
+            val pendingSubPaint = Paint().apply {
+                color = Color.rgb(146, 64, 14)
+                textSize = 8.5f
+                isAntiAlias = true
+            }
+            canvas.drawText("This batch has been logged at harvest and is awaiting ISO/IEC 17025 accredited laboratory testing.", 48f, y + 34f, pendingSubPaint)
+            canvas.drawText("Official Certificate of Analysis parameters will be appended upon HPLC completion.", 48f, y + 46f, pendingSubPaint)
 
-        val verdictSubPaint = Paint().apply {
-            color = Color.rgb(4, 120, 87)
-            textSize = 8.5f
-            isAntiAlias = true
+            y += 24f
         }
-        val testedByStr = lab?.testedBy ?: "Dr. Ananya Sharma, Lead Biochemist • National Botanical QA Laboratory"
-        canvas.drawText("Certified by: $testedByStr", 48f, y + 32f, verdictSubPaint)
 
         // Cryptographic Blockchain Proof Section
         y += 60f
@@ -259,24 +303,22 @@ object BotanicalPdfGenerator {
 
         y += 16f
         val txHash = product.timeline.firstOrNull { it.txHash != null }?.txHash
-            ?: "0x7a39d891b24e60fc9019b889104fa218c57e84b901a89c"
         val ipfsCid = product.labReport?.certificateIpfsCid
-            ?: "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco"
 
         canvas.drawText("EVM Smart Contract: ", 36f, y, bodyBoldPaint)
-        canvas.drawText("0x5FbD...8aa3 (Polygon Amoy Testnet • Chain ID: 80002)", 140f, y, monoPaint)
+        canvas.drawText("Polygon Amoy Testnet • Chain ID: 80002", 140f, y, monoPaint)
 
         y += 15f
-        canvas.drawText("Block Height: ", 36f, y, bodyBoldPaint)
-        canvas.drawText("#4,921,084 • Gas Consumed: 21,450 WEI", 140f, y, monoPaint)
+        canvas.drawText("Provenance Stage: ", 36f, y, bodyBoldPaint)
+        canvas.drawText(product.status.name + " (" + (if (product.isLocalPending) "Pending Sync" else "On-Chain Verified") + ")", 140f, y, monoPaint)
 
         y += 15f
         canvas.drawText("Transaction Hash: ", 36f, y, bodyBoldPaint)
-        canvas.drawText(txHash, 140f, y, monoPaint)
+        canvas.drawText(txHash ?: "PENDING ON-CHAIN CONFIRMATION", 140f, y, monoPaint)
 
         y += 15f
         canvas.drawText("IPFS CoA Hash: ", 36f, y, bodyBoldPaint)
-        canvas.drawText("ipfs://$ipfsCid", 140f, y, monoPaint)
+        canvas.drawText(if (ipfsCid != null) "ipfs://$ipfsCid" else "PENDING IPFS ARCHIVAL", 140f, y, monoPaint)
 
         // Legal Tamper-Proof Stamp
         y += 32f

@@ -409,8 +409,13 @@ fun HomeScreen(
                                         color = colors.textSecondary,
                                         fontWeight = FontWeight.Bold
                                     )
+                                    val purityText = when {
+                                        featured.labReport != null -> "${featured.labReport?.purityPercentage}% Active Purity"
+                                        featured.activeCompounds.isNotEmpty() -> featured.activeCompounds.first()
+                                        else -> "Assay In Progress"
+                                    }
                                     Text(
-                                        "99.5% Withanolides",
+                                        purityText,
                                         fontSize = 12.sp,
                                         color = colors.primary,
                                         fontWeight = FontWeight.Bold
@@ -487,14 +492,14 @@ fun HomeScreen(
                 ) {
                     MetricCardItem(
                         icon = Icons.Default.Eco,
-                        title = "${uiState.products.size}+ Batches",
+                        title = "${uiState.products.size} Batches",
                         label = "Synchronized",
                         modifier = Modifier.weight(1f)
                     )
                     MetricCardItem(
                         icon = Icons.Default.Shield,
-                        title = "100%",
-                        label = "Tamper-Proof",
+                        title = "Polygon Amoy",
+                        label = "Consensus Network",
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -505,14 +510,14 @@ fun HomeScreen(
                 ) {
                     MetricCardItem(
                         icon = Icons.Default.Hub,
-                        title = "5/5 Nodes",
+                        title = if (uiState.activeNodes > 0) "${uiState.activeNodes} Nodes" else "5 Nodes",
                         label = "Active Consensus",
                         modifier = Modifier.weight(1f)
                     )
                     MetricCardItem(
                         icon = Icons.Default.Lock,
-                        title = "#1,048,291",
-                        label = "Block Height",
+                        title = if (uiState.blockHeight > 0) "#${uiState.blockHeight}" else "Syncing Block",
+                        label = "Ledger Height",
                         modifier = Modifier.weight(1f)
                     )
                 }

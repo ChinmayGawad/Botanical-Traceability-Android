@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.florachain.domain.model.BotanicalProduct
 import com.florachain.domain.repository.ProductRepository
+import com.florachain.domain.usecase.GetBlockchainStatsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,14 +17,15 @@ data class HomeUiState(
     val featuredProduct: BotanicalProduct? = null,
     val isLoading: Boolean = false,
     val searchQuery: String = "",
-    val blockHeight: Long = 1048291L,
-    val activeNodes: Int = 5,
+    val blockHeight: Long = 0L,
+    val activeNodes: Int = 0,
     val error: String? = null
 )
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val getBlockchainStatsUseCase: GetBlockchainStatsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -62,6 +64,16 @@ class HomeViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false, error = err.localizedMessage) }
                 }
             )
+
+            // Refresh live blockchain stats
+            getBlockchainStatsUseCase().onSuccess { stats ->
+                _uiState.update {
+                    it.copy(
+                        blockHeight = stats.blockHeight,
+                        activeNodes = stats.activeNodes
+                    )
+                }
+            }
         }
     }
 }
