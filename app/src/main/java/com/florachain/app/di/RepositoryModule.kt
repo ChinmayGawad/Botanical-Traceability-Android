@@ -59,10 +59,17 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideWeb3jClient(): com.florachain.data.blockchain.Web3jClient {
+        return com.florachain.data.blockchain.Web3jClient()
+    }
+
+    @Provides
+    @Singleton
     fun provideBlockchainRepository(
-        api: FloraChainApi
+        api: FloraChainApi,
+        web3jClient: com.florachain.data.blockchain.Web3jClient
     ): com.florachain.domain.repository.BlockchainRepository {
-        return com.florachain.data.repository.BlockchainRepositoryImpl(api)
+        return com.florachain.data.repository.BlockchainRepositoryImpl(api, web3jClient)
     }
 }
 

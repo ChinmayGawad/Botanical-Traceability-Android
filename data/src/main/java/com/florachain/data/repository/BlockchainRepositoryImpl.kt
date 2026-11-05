@@ -1,5 +1,6 @@
 package com.florachain.data.repository
 
+import com.florachain.data.blockchain.Web3jClient
 import com.florachain.data.mapper.toDomain
 import com.florachain.data.remote.FloraChainApi
 import com.florachain.domain.model.BlockchainTx
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class BlockchainRepositoryImpl(
-    private val api: FloraChainApi
+    private val api: FloraChainApi,
+    private val web3jClient: Web3jClient = Web3jClient()
 ) : BlockchainRepository {
 
     private val _networkStats = MutableStateFlow<NetworkStats>(getInitialNetworkStats())
@@ -20,18 +22,25 @@ class BlockchainRepositoryImpl(
 
     override suspend fun getNetworkStats(): Result<NetworkStats> {
         return runCatching {
+            var stats: NetworkStats? = null
             try {
                 val response = api.getNetworkStats()
                 if (response.isSuccessful && response.body() != null) {
-                    val stats = response.body()!!.toDomain()
-                    _networkStats.value = stats
-                    stats
-                } else {
-                    _networkStats.value
+                    stats = response.body()!!.toDomain()
                 }
-            } catch (e: Exception) {
-                _networkStats.value
+            } catch (_: Exception) {}
+
+            // Augment or fallback with live Polygon Amoy RPC block number
+            val liveBlock = web3jClient.getLatestBlockNumber().getOrNull()
+            val current = stats ?: _networkStats.value
+            val resolvedStats = if (liveBlock != null && liveBlock > 0) {
+                current.copy(blockHeight = liveBlock)
+            } else {
+                current
             }
+
+            _networkStats.value = resolvedStats
+            resolvedStats
         }
     }
 
