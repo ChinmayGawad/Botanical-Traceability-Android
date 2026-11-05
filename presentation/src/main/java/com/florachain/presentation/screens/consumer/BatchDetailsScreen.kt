@@ -34,7 +34,101 @@ import com.florachain.designsystem.components.*
 import com.florachain.domain.model.BlockchainTx
 import com.florachain.domain.model.BotanicalProduct
 import com.florachain.domain.model.VerificationState
+import com.florachain.presentation.viewmodel.BatchDetailsUiState
+import com.florachain.presentation.viewmodel.BatchDetailsViewModel
 import com.florachain.presentation.viewmodel.VerifyViewModel
+
+@Composable
+fun BatchDetailsScreen(
+    viewModel: BatchDetailsViewModel,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    verifyViewModel: VerifyViewModel? = null
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val colors = FloraChainTheme.colors
+
+    when (val state = uiState) {
+        is BatchDetailsUiState.Loading -> {
+            Scaffold(
+                topBar = {
+                    AppTopBar(
+                        title = "Botanical Provenance",
+                        canNavigateBack = true,
+                        onNavigateBack = onNavigateBack,
+                        showNetworkPill = true,
+                        showThemeToggle = true
+                    )
+                },
+                containerColor = colors.background
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = colors.primary)
+                }
+            }
+        }
+        is BatchDetailsUiState.Error -> {
+            Scaffold(
+                topBar = {
+                    AppTopBar(
+                        title = "Botanical Provenance",
+                        canNavigateBack = true,
+                        onNavigateBack = onNavigateBack,
+                        showNetworkPill = true,
+                        showThemeToggle = true
+                    )
+                },
+                containerColor = colors.background
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ErrorOutline,
+                            contentDescription = null,
+                            tint = colors.errorRose,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Text(
+                            text = state.message,
+                            color = colors.textPrimary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Button(
+                            onClick = { viewModel.loadProduct() },
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+                        ) {
+                            Text("Retry", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        }
+        is BatchDetailsUiState.Success -> {
+            BatchDetailsScreen(
+                product = state.product,
+                onNavigateBack = onNavigateBack,
+                modifier = modifier,
+                verifyViewModel = verifyViewModel
+            )
+        }
+    }
+}
 
 @Composable
 fun BatchDetailsScreen(
@@ -182,8 +276,8 @@ fun BatchDetailsScreen(
 
                     OutlinedButton(
                         onClick = { isReportDialogOpen = true },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444)),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.errorRose),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, colors.errorRose.copy(alpha = 0.5f)),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f)
                     ) {
@@ -734,7 +828,7 @@ private fun TransactionReceiptDialog(
                 if (!payload.isNullOrBlank()) {
                     Text("DECODED ON-CHAIN EVENT PAYLOAD", fontSize = 8.sp, color = colors.textMuted, fontWeight = FontWeight.Bold)
                     Surface(
-                        color = Color(0xFF0F172A),
+                        color = colors.surfaceElevated,
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -742,7 +836,7 @@ private fun TransactionReceiptDialog(
                             text = payload,
                             fontSize = 10.sp,
                             fontFamily = FontFamily.Monospace,
-                            color = Color(0xFF38BDF8),
+                            color = colors.infoBlue,
                             modifier = Modifier.padding(10.dp)
                         )
                     }

@@ -44,23 +44,11 @@ sealed class BottomNavItem(val title: String, val route: String, val icon: Image
 @Composable
 fun FloraChainNavHost(
     navController: NavHostController = rememberNavController(),
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    authViewModel: AuthViewModel = hiltViewModel(),
-    verifyViewModel: VerifyViewModel = hiltViewModel(),
-    farmerViewModel: FarmerViewModel = hiltViewModel(),
-    processorViewModel: ProcessorViewModel = hiltViewModel(),
-    labViewModel: LabViewModel = hiltViewModel(),
-    distributorViewModel: DistributorViewModel = hiltViewModel(),
-    retailerViewModel: RetailerViewModel = hiltViewModel(),
-    adminViewModel: AdminViewModel = hiltViewModel(),
-    blockchainExplorerViewModel: BlockchainExplorerViewModel = hiltViewModel(),
-    qrStudioViewModel: QrStudioViewModel = hiltViewModel(),
-    fleetCommandViewModel: FleetCommandViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val authState by authViewModel.uiState.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
 
     val bottomNavItems = listOf(
         BottomNavItem.Home,
@@ -152,6 +140,7 @@ fun FloraChainNavHost(
         ) {
             // Home Screen
             composable(Screen.Home.route) {
+                val homeViewModel: HomeViewModel = hiltViewModel()
                 HomeScreen(
                     viewModel = homeViewModel,
                     onNavigateToDetails = { batchId ->
@@ -187,6 +176,7 @@ fun FloraChainNavHost(
 
             // Consumer Verification Screen
             composable(Screen.Verification.route) {
+                val verifyViewModel: VerifyViewModel = hiltViewModel()
                 PublicVerificationScreen(
                     viewModel = verifyViewModel,
                     onNavigateToDetails = { batchId ->
@@ -199,23 +189,11 @@ fun FloraChainNavHost(
             composable(
                 route = Screen.BatchDetails.route,
                 arguments = listOf(navArgument("batchId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val batchId = backStackEntry.arguments?.getString("batchId") ?: ""
-                val homeState by homeViewModel.uiState.collectAsState()
-                val verifyState by verifyViewModel.uiState.collectAsState()
-                val farmerState by farmerViewModel.uiState.collectAsState()
-
-                // Find batch from homeViewModel, verifyViewModel, or farmer list matching either id or batchId
-                val product = homeState.products.find {
-                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
-                } ?: verifyState.result?.product?.takeIf {
-                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
-                } ?: farmerState.products.find {
-                    it.id.equals(batchId, ignoreCase = true) || it.batchId.equals(batchId, ignoreCase = true)
-                } ?: homeState.featuredProduct ?: verifyState.result?.product
-
+            ) {
+                val batchDetailsViewModel: BatchDetailsViewModel = hiltViewModel()
+                val verifyViewModel: VerifyViewModel = hiltViewModel()
                 BatchDetailsScreen(
-                    product = product,
+                    viewModel = batchDetailsViewModel,
                     onNavigateBack = { navController.popBackStack() },
                     verifyViewModel = verifyViewModel
                 )
@@ -260,6 +238,7 @@ fun FloraChainNavHost(
 
             // Farmer Dashboard Screen
             composable(Screen.FarmerDashboard.route) {
+                val farmerViewModel: FarmerViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -286,6 +265,7 @@ fun FloraChainNavHost(
 
             // Register Harvest Screen
             composable(Screen.RegisterHarvest.route) {
+                val farmerViewModel: FarmerViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -304,6 +284,7 @@ fun FloraChainNavHost(
 
             // Processor Dashboard Screen
             composable(Screen.ProcessorDashboard.route) {
+                val processorViewModel: ProcessorViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -328,6 +309,7 @@ fun FloraChainNavHost(
 
             // Laboratory Dashboard Screen
             composable(Screen.LabDashboard.route) {
+                val labViewModel: LabViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -352,6 +334,7 @@ fun FloraChainNavHost(
 
             // Distributor Dashboard Screen
             composable(Screen.DistributorDashboard.route) {
+                val distributorViewModel: DistributorViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -376,6 +359,7 @@ fun FloraChainNavHost(
 
             // Retailer Dashboard Screen
             composable(Screen.RetailerDashboard.route) {
+                val retailerViewModel: RetailerViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -401,6 +385,7 @@ fun FloraChainNavHost(
 
             // Retailer Generate QR Label Studio
             composable(Screen.GenerateQr.route) {
+                val qrStudioViewModel: QrStudioViewModel = hiltViewModel()
                 GenerateQrScreen(
                     viewModel = qrStudioViewModel,
                     onNavigateBack = { navController.popBackStack() }
@@ -409,6 +394,7 @@ fun FloraChainNavHost(
 
             // Admin Dashboard Screen
             composable(Screen.AdminDashboard.route) {
+                val adminViewModel: AdminViewModel = hiltViewModel()
                 if (authState.currentUser == null) {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.Login.route) {
@@ -434,6 +420,7 @@ fun FloraChainNavHost(
 
             // User Approvals Screen
             composable(Screen.UserApprovals.route) {
+                val adminViewModel: AdminViewModel = hiltViewModel()
                 UserApprovalsScreen(
                     viewModel = adminViewModel,
                     onNavigateBack = { navController.popBackStack() }
@@ -442,6 +429,7 @@ fun FloraChainNavHost(
 
             // Suspicious Reports Desk Screen
             composable(Screen.SuspiciousReports.route) {
+                val adminViewModel: AdminViewModel = hiltViewModel()
                 SuspiciousReportsScreen(
                     viewModel = adminViewModel,
                     onNavigateBack = { navController.popBackStack() }
@@ -450,6 +438,7 @@ fun FloraChainNavHost(
 
             // Blockchain Ledger Explorer Screen
             composable(Screen.BlockchainExplorer.route) {
+                val blockchainExplorerViewModel: BlockchainExplorerViewModel = hiltViewModel()
                 BlockchainExplorerScreen(
                     viewModel = blockchainExplorerViewModel,
                     onNavigateBack = { navController.popBackStack() }
@@ -458,6 +447,7 @@ fun FloraChainNavHost(
 
             // Dedicated Fleet Command Center Deck
             composable(Screen.FleetMap.route) {
+                val fleetCommandViewModel: FleetCommandViewModel = hiltViewModel()
                 FleetCommandScreen(
                     viewModel = fleetCommandViewModel,
                     onNavigateBack = { navController.popBackStack() }
